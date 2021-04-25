@@ -1,5 +1,7 @@
 package com.pyjava.notefx;
 
+import javafx.application.Application;
+
 /**
  * <p>描述: [功能描述] </p>
  *
@@ -9,6 +11,6 @@ package com.pyjava.notefx;
  */
 public class AppLauncher {
     public static void main(String[] args) {
-        Main.main(args);
+        Application.launch(Main.class,args);
     }
 }
