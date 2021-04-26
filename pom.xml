@@ -67,11 +67,21 @@
                             <goal>package</goal>
                         </goals>
                         <configuration>
+                            <assetsDir>${basedir}/assets</assetsDir>
                             <mainClass>com.pyjava.notefx.AppLauncher</mainClass>
                             <bundleJre>true</bundleJre>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>true</administratorRequired>
                             <platform>auto</platform>
+
+                            <winConfig>
+                                <icoFile>${basedir}/assets/windows/noteFx.ico</icoFile>
+                                <setupLanguages>
+                                    <english>compiler:Default.isl</english>
+                                    <chinese>compiler:Languages\Chinese.isl</chinese>
+                                </setupLanguages>
+                            </winConfig>
+
                         </configuration>
                     </execution>
                 </executions>
