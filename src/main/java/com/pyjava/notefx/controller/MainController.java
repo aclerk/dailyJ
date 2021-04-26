@@ -1,8 +1,12 @@
 package com.pyjava.notefx.controller;
 
+import com.pyjava.notefx.Main;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 
 
 /**
@@ -14,8 +18,21 @@ import javafx.scene.control.Button;
  */
 public class MainController {
 
-    public void handlerBtnClick(ActionEvent event) {
-        Button btnSource = (Button) event.getSource();
-        btnSource.setText("I am clicked!");
+
+    @FXML
+    public StackPane root;
+
+    @FXML
+    public BorderPane rootPane;
+
+    @FXML
+    public void createDir(){
+        System.out.println("createDir");
+    }
+
+    @FXML
+    public void exit(){
+        Main.get().close();
+        Platform.exit();
     }
 }

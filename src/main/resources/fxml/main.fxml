@@ -1,11 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:id="root"
+           fx:controller="com.pyjava.notefx.controller.MainController">
+    <BorderPane xmlns="http://javafx.com/javafx"
+                xmlns:fx="http://javafx.com/fxml"
+                fx:id="rootPane"
+                prefHeight="700.0" prefWidth="900.0">
+        <top>
+            <MenuBar>
+                <Menu text="File">
+                    <Menu>
+                        <text>Open</text>
+                        <MenuItem onAction="#createDir">
+                            <text>Open File</text>
+                        </MenuItem>
+                        <MenuItem onAction="#createDir">
+                            <text>Open Hexo</text>
+                        </MenuItem>
+                    </Menu>
+                    <SeparatorMenuItem/>
+                    <MenuItem onAction="#exit">
+                        <text>exit</text>
+                    </MenuItem>
+                </Menu>
 
+                <Menu text="Edit">
+                </Menu>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pyjava.notefx.controller.MainController">
-    <center>
-        <Button text="Click Me" BorderPane.alignment="CENTER" onAction="#handlerBtnClick" />
-    </center>
-</BorderPane>
+                <Menu text="View">
+                </Menu>
+
+                <Menu text="Help">
+                </Menu>
+
+            </MenuBar>
+        </top>
+    </BorderPane>
+
+</StackPane>
