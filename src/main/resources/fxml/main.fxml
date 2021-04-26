@@ -19,10 +19,10 @@
                 <Menu text="File">
                     <Menu>
                         <text>Open</text>
-                        <MenuItem onAction="#createDir">
+                        <MenuItem onAction="#openFile">
                             <text>Open File</text>
                         </MenuItem>
-                        <MenuItem onAction="#createDir">
+                        <MenuItem onAction="#openHexo">
                             <text>Open Hexo</text>
                         </MenuItem>
                     </Menu>
