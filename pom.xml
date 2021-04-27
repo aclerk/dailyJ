@@ -28,6 +28,11 @@
             <version>${javafx.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.reactfx</groupId>
+            <artifactId>reactfx</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -43,6 +48,7 @@
                 <includes>
                     <include>**/fxml/*.fxml</include>
                     <include>**/img/*.*</include>
+                    <include>**/css/*.*</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

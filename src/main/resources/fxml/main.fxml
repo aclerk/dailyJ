@@ -6,6 +6,11 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TabPane?>
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
            fx:id="root"
@@ -43,6 +48,37 @@
 
             </MenuBar>
         </top>
+        <center>
+            <SplitPane fx:id="splitPane" BorderPane.alignment="CENTER">
+                <BorderPane fx:id="leftPane">
+
+                </BorderPane>
+                <TabPane fx:id="rightTab">
+                </TabPane>
+            </SplitPane>
+
+        </center>
+        <bottom>
+            <StackPane
+                    xmlns="http://javafx.com/javafx"
+                    xmlns:fx="http://javafx.com/fxml"
+                    style="-fx-background-color:#F2F2F2"
+                    prefHeight="25">
+                <padding>
+                    <Insets left="6" right="20"/>
+                </padding>
+
+                <HBox
+                        spacing="10"
+                        alignment="CENTER_RIGHT"
+                        StackPane.alignment="CENTER_RIGHT">
+
+                    <Label fx:id="coordinate"  wrapText="true"/>
+                    <Label fx:id="textType"  wrapText="true" text="markdown"/>
+                </HBox>
+
+            </StackPane>
+        </bottom>
     </BorderPane>
 
 </StackPane>
