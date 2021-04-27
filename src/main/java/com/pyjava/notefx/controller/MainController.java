@@ -4,8 +4,6 @@ import com.pyjava.notefx.Main;
 import com.pyjava.notefx.component.FileTab;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -18,8 +16,6 @@ import org.reactfx.EventStreams;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
@@ -95,8 +91,6 @@ public class MainController implements Initializable {
             // 返回读取文件数据
             return sb.toString();
         }).thenAccept(s -> Platform.runLater(() -> {
-            // 文件维护数组中加入文件
-
             // 添加tab
             FileTab tab = new FileTab(fileName, file);
             // 将文件内容加入tab中
