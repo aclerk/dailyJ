@@ -1,4 +1,10 @@
 /*---- main-split tab pane ----*/
+.main-split .tab-pane {
+    -mwfx-tab-background: derive(-fx-background,25%);
+    -mwfx-tab-active: #787878;
+
+    -fx-tab-max-width: 10em;
+}
 
 .main-split .tab-pane > .tab-header-area {
     -fx-padding: 0 0.25em 0 0;
@@ -16,12 +22,6 @@
     -fx-padding: 0.5em 0.25em 0.5em 1em;
 }
 
-.main-split .tab-pane {
-    -mwfx-tab-background: derive(-fx-background,25%);
-    -mwfx-tab-active: #f47806;
-
-    -fx-tab-max-width: 10em;
-}
 .main-split .tab-pane > .tab-header-area > .headers-region > .tab.preview {
     -fx-font-style: italic;
 }
