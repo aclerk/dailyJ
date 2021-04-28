@@ -6,8 +6,14 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
@@ -16,6 +22,7 @@ import org.reactfx.EventStreams;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
@@ -42,6 +49,8 @@ public class MainController implements Initializable {
     public BorderPane leftPane;
     @FXML
     public TabPane rightTab;
+
+    private final Image penIcon = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/pen-16.png")));
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -98,7 +107,39 @@ public class MainController implements Initializable {
             TextArea textArea = new TextArea();
             textArea.setText(s);
             tab.setContent(textArea);
+            // 监听文本区域值改变,当改变时,提供修改图标,提示用户该文件已被修改
+            textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+                ImageView iv = new ImageView(penIcon);
+                iv.setSmooth(true);
+                iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+                tab.setGraphic(iv);
+            });
+            textArea.setOnKeyPressed((event) -> {
+                if(event.isControlDown() && event.getCode().getName().equals(KeyCode.S.getName())){
+                    tab.setGraphic(null);
+                    CompletableFuture.supplyAsync(()->{
+                        FileWriter fileWriter = null;
+                        try {
+                            fileWriter = new FileWriter(tab.getFile());
+                            // 写入文件
+                            fileWriter.write(textArea.getText());
+                            fileWriter.flush();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            if(fileWriter != null){
+                                try {
+                                    fileWriter.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
 
+                        return null;
+                    });
+                }
+            });
             rightTab.getTabs().add(tab);
 
             // 将刚打开的文件的tab置为选中状态

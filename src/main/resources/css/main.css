@@ -49,7 +49,6 @@
     visibility: hidden;
 }
 
-
 /* hide tab-close-button by default; show it only for selected tab and on hover */
 .main-split .tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-close-button {
     -fx-background-color: transparent;
