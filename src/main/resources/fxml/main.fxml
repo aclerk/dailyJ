@@ -11,10 +11,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TabPane?>
+<?import java.net.URL?>
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
            fx:id="root"
            fx:controller="com.pyjava.notefx.controller.MainController">
+    <stylesheets>
+        <URL value="@/css/main.css"/>
+    </stylesheets>
     <BorderPane xmlns="http://javafx.com/javafx"
                 xmlns:fx="http://javafx.com/fxml"
                 fx:id="rootPane"

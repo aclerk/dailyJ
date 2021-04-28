@@ -46,6 +46,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         EventStreams.changesOf(rootPane.widthProperty()).subscribe(this::changeWidth);
+        splitPane.getStyleClass().add("main-split");
     }
 
     @FXML
