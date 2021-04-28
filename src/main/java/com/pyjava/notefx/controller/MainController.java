@@ -86,7 +86,7 @@ public class MainController implements Initializable {
 
         // 如果该文件还没有打开,则
         String fileName = file.getName();
-        CompletableFuture.supplyAsync(() -> {
+        String fileContent = CompletableFuture.supplyAsync(() -> {
             // 读取文件时,鼠标指针为WAIT状态
             rootPane.setCursor(Cursor.WAIT);
             StringBuilder sb = new StringBuilder();
@@ -100,52 +100,51 @@ public class MainController implements Initializable {
             rootPane.setCursor(Cursor.DEFAULT);
             // 返回读取文件数据
             return sb.toString();
-        }).thenAccept(s -> Platform.runLater(() -> {
-            // 添加tab
-            FileTab tab = new FileTab(fileName, file);
-            // 将文件内容加入tab中
-            TextArea textArea = new TextArea();
-            textArea.setText(s);
-            tab.setContent(textArea);
-            // 监听文本区域值改变,当改变时,提供修改图标,提示用户该文件已被修改
-            textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-                ImageView iv = new ImageView(penIcon);
-                iv.setSmooth(true);
-                iv.setViewport(new Rectangle2D(0, 0, 16, 16));
-                tab.setGraphic(iv);
-            });
-            textArea.setOnKeyPressed((event) -> {
-                if(event.isControlDown() && event.getCode().getName().equals(KeyCode.S.getName())){
-                    tab.setGraphic(null);
-                    CompletableFuture.supplyAsync(()->{
-                        FileWriter fileWriter = null;
-                        try {
-                            fileWriter = new FileWriter(tab.getFile());
-                            // 写入文件
-                            fileWriter.write(textArea.getText());
-                            fileWriter.flush();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if(fileWriter != null){
-                                try {
-                                    fileWriter.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+        }).join();
+        // 添加tab
+        FileTab tab = new FileTab(fileName, file);
+        // 将文件内容加入tab中
+        TextArea textArea = new TextArea();
+        textArea.setText(fileContent);
+        tab.setContent(textArea);
+        // 监听文本区域值改变,当改变时,提供修改图标,提示用户该文件已被修改
+        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            ImageView iv = new ImageView(penIcon);
+            iv.setSmooth(true);
+            iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+            tab.setGraphic(iv);
+        });
+        textArea.setOnKeyPressed((event) -> {
+            if(event.isControlDown() && event.getCode().getName().equals(KeyCode.S.getName())){
+                tab.setGraphic(null);
+                CompletableFuture.supplyAsync(()->{
+                    FileWriter fileWriter = null;
+                    try {
+                        fileWriter = new FileWriter(tab.getFile());
+                        // 写入文件
+                        fileWriter.write(textArea.getText());
+                        fileWriter.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if(fileWriter != null){
+                            try {
+                                fileWriter.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
+                    }
 
-                        return null;
-                    });
-                }
-            });
-            rightTab.getTabs().add(tab);
+                    return null;
+                });
+            }
+        });
+        rightTab.getTabs().add(tab);
 
-            // 将刚打开的文件的tab置为选中状态
-            SingleSelectionModel<Tab> selectionModel = rightTab.getSelectionModel();
-            selectionModel.select(tab);
-        }));
+        // 将刚打开的文件的tab置为选中状态
+        SingleSelectionModel<Tab> selectionModel = rightTab.getSelectionModel();
+        selectionModel.select(tab);
     }
 
     @FXML
