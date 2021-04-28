@@ -88,6 +88,10 @@
                                     <english>compiler:Default.isl</english>
                                     <chinese>compiler:Languages\Chinese.isl</chinese>
                                 </setupLanguages>
+                                <disableDirPage>false</disableDirPage>
+                                <disableProgramGroupPage>false</disableProgramGroupPage>
+                                <disableFinishedPage>false</disableFinishedPage>
+                                <createDesktopIconTask>false</createDesktopIconTask>
                             </winConfig>
 
                         </configuration>
