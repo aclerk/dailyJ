@@ -12,8 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
@@ -22,6 +20,7 @@ import org.reactfx.EventStreams;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
@@ -90,7 +89,7 @@ public class MainController implements Initializable {
             // 读取文件时,鼠标指针为WAIT状态
             rootPane.setCursor(Cursor.WAIT);
             StringBuilder sb = new StringBuilder();
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
                 br.lines().map(s -> s + "\n").forEach(sb::append);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -114,13 +113,15 @@ public class MainController implements Initializable {
             iv.setViewport(new Rectangle2D(0, 0, 16, 16));
             tab.setGraphic(iv);
         });
+        // 监听按键
         textArea.setOnKeyPressed((event) -> {
+            // 监听按键 当ctrl和s键按下时触发文件保存功能
             if(event.isControlDown() && event.getCode().getName().equals(KeyCode.S.getName())){
                 tab.setGraphic(null);
                 CompletableFuture.supplyAsync(()->{
                     FileWriter fileWriter = null;
                     try {
-                        fileWriter = new FileWriter(tab.getFile());
+                        fileWriter = new FileWriter(tab.getFile(),  StandardCharsets.UTF_8);
                         // 写入文件
                         fileWriter.write(textArea.getText());
                         fileWriter.flush();
