@@ -6,22 +6,20 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import org.reactfx.Change;
 import org.reactfx.EventStreams;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
@@ -33,6 +31,8 @@ import java.util.concurrent.CompletableFuture;
  * @date 2021/4/25 14:18
  */
 public class MainController implements Initializable {
+
+    public static int untitledCount = 1;
 
     @FXML
     public StackPane root;
@@ -49,13 +49,46 @@ public class MainController implements Initializable {
     @FXML
     public TabPane rightTab;
 
-    private final Image penIcon = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/pen-16.png")));
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         EventStreams.changesOf(rootPane.widthProperty()).subscribe(this::changeWidth);
         splitPane.getStyleClass().add("main-split");
+        ObservableList<Tab> tabs = rightTab.getTabs();
+        if(tabs.size() <= 0){
+            FileTab fileTab = new FileTab();
+            fileTab.setText("Untitled-"+untitledCount);
+            // 将空内容加入tab中
+            TextArea textArea = fileTab.getTextArea();
+            textArea.setText("");
+            fileTab.setContent(textArea);
+            untitledCount++;
+            tabs.add(fileTab);
+        }
     }
+
+    @FXML
+    public void createFile(){
+        // 新建文件时 展示未命名tab
+        ObservableList<Tab> tabs = rightTab.getTabs();
+        FileTab fileTab = new FileTab();
+        fileTab.setText("Untitled-"+untitledCount);
+        untitledCount++;
+        // 将空内容加入tab中
+        TextArea textArea = fileTab.getTextArea();
+        textArea.setText("");
+        fileTab.setContent(textArea);
+        tabs.add(fileTab);
+        // 将刚打开的文件的tab置为选中状态
+        SingleSelectionModel<Tab> selectionModel = rightTab.getSelectionModel();
+        selectionModel.select(fileTab);
+    }
+
+    @FXML
+    public void createHexo(){
+        System.out.println("create file");
+    }
+
 
     @FXML
     public void openFile() {
@@ -69,6 +102,10 @@ public class MainController implements Initializable {
         for (int i = 0; i < tabs.size(); i++) {
             FileTab tab = (FileTab) tabs.get(i);
             File f = tab.getFile();
+            // unTitled的文件
+            if(null == f){
+                break;
+            }
             boolean equals = f.getAbsolutePath().equals(file.getAbsolutePath());
             if (equals) {
                 index = i;
@@ -101,51 +138,17 @@ public class MainController implements Initializable {
             return sb.toString();
         }).join();
         // 添加tab
-        FileTab tab = new FileTab(fileName, file);
+        FileTab fileTab = new FileTab(fileName, file);
         // 将文件内容加入tab中
-        TextArea textArea = new TextArea();
+        TextArea textArea = fileTab.getTextArea();
         textArea.setText(fileContent);
-        tab.setContent(textArea);
-        // 监听文本区域值改变,当改变时,提供修改图标,提示用户该文件已被修改
-        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            ImageView iv = new ImageView(penIcon);
-            iv.setSmooth(true);
-            iv.setViewport(new Rectangle2D(0, 0, 16, 16));
-            tab.setGraphic(iv);
-        });
-        // 监听按键
-        textArea.setOnKeyPressed((event) -> {
-            // 监听按键 当ctrl和s键按下时触发文件保存功能
-            if(event.isControlDown() && event.getCode().getName().equals(KeyCode.S.getName())){
-                tab.setGraphic(null);
-                CompletableFuture.supplyAsync(()->{
-                    FileWriter fileWriter = null;
-                    try {
-                        fileWriter = new FileWriter(tab.getFile(),  StandardCharsets.UTF_8);
-                        // 写入文件
-                        fileWriter.write(textArea.getText());
-                        fileWriter.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if(fileWriter != null){
-                            try {
-                                fileWriter.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+        fileTab.setContent(textArea);
 
-                    return null;
-                });
-            }
-        });
-        rightTab.getTabs().add(tab);
+        rightTab.getTabs().add(fileTab);
 
         // 将刚打开的文件的tab置为选中状态
         SingleSelectionModel<Tab> selectionModel = rightTab.getSelectionModel();
-        selectionModel.select(tab);
+        selectionModel.select(fileTab);
     }
 
     @FXML
