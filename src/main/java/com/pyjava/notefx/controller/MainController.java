@@ -2,14 +2,19 @@ package com.pyjava.notefx.controller;
 
 import com.pyjava.notefx.Main;
 import com.pyjava.notefx.component.FileTab;
+import com.pyjava.notefx.file.FileMonitor;
+import com.pyjava.notefx.thread.NoteFxThreadPool;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.reactfx.Change;
 import org.reactfx.EventStreams;
@@ -20,8 +25,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.function.Consumer;
+
+import static com.pyjava.notefx.constants.Resource.FILE_ICON;
+import static com.pyjava.notefx.constants.Resource.FOLDER_ICON;
 
 /**
  * <p>描述: [功能描述] </p>
@@ -30,7 +41,7 @@ import java.util.concurrent.CompletableFuture;
  * @version v1.0
  * @date 2021/4/25 14:18
  */
-public class MainController implements Initializable {
+public class MainController implements Initializable, Runnable {
 
     public static int untitledCount = 1;
 
@@ -45,9 +56,9 @@ public class MainController implements Initializable {
     @FXML
     public SplitPane splitPane;
     @FXML
-    public BorderPane leftPane;
-    @FXML
     public TabPane rightTab;
+    @FXML
+    public TreeView<File> treeView;
 
 
     @Override
@@ -85,15 +96,18 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void createHexo(){
+    public void createNote(){
         System.out.println("create file");
     }
 
 
     @FXML
-    public void openFile() {
+    public void openFile() throws ExecutionException, InterruptedException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("打开文件");
+        FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        FileChooser.ExtensionFilter mdFilter = new FileChooser.ExtensionFilter("Markdown files (*.md)", "*.md");
+        fileChooser.getExtensionFilters().addAll(txtFilter, mdFilter);
         File file = fileChooser.showOpenDialog(Main.get());
 
         // 查看当前文件是否已经被打开
@@ -121,39 +135,63 @@ public class MainController implements Initializable {
         }
 
         // 如果该文件还没有打开,则
-        String fileName = file.getName();
-        String fileContent = CompletableFuture.supplyAsync(() -> {
-            // 读取文件时,鼠标指针为WAIT状态
-            rootPane.setCursor(Cursor.WAIT);
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-                br.lines().map(s -> s + "\n").forEach(sb::append);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "";
-            }
-            // 读取完成将鼠标恢复
-            rootPane.setCursor(Cursor.DEFAULT);
-            // 返回读取文件数据
-            return sb.toString();
-        }).join();
-        // 添加tab
-        FileTab fileTab = new FileTab(fileName, file);
-        // 将文件内容加入tab中
-        TextArea textArea = fileTab.getTextArea();
-        textArea.setText(fileContent);
-        fileTab.setContent(textArea);
+        if(file != null){
+            String fileName = file.getName();
 
-        rightTab.getTabs().add(fileTab);
+            FutureTask<String> call = new FutureTask<>(() -> {
+                StringBuilder sb = new StringBuilder();
+                try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+                    br.lines().map(s -> s + "\n").forEach(sb::append);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return "";
+                }
+                // 读取完成将鼠标恢复
+                rootPane.setCursor(Cursor.DEFAULT);
+                // 返回读取文件数据
+                return sb.toString();
+            });
+            NoteFxThreadPool.getThreadPool().submit(call);
+            String fileContent = call.get();
 
-        // 将刚打开的文件的tab置为选中状态
-        SingleSelectionModel<Tab> selectionModel = rightTab.getSelectionModel();
-        selectionModel.select(fileTab);
+            // 添加tab
+            FileTab fileTab = new FileTab(fileName, file);
+            // 将文件内容加入tab中
+            TextArea textArea = fileTab.getTextArea();
+            textArea.setText(fileContent);
+            fileTab.setContent(textArea);
+
+            rightTab.getTabs().add(fileTab);
+
+            // 将刚打开的文件的tab置为选中状态
+            SingleSelectionModel<Tab> selectionModel = rightTab.getSelectionModel();
+            selectionModel.select(fileTab);
+        }
     }
 
     @FXML
-    public void openHexo() {
-        System.out.println("openHexo");
+    public void openFolder(){
+        System.out.println("open folder");
+        DirectoryChooser chooser = new DirectoryChooser();
+        File dir = chooser.showDialog(Main.get());
+
+        if(dir != null && dir.exists()){
+            ImageView iv = new ImageView(FOLDER_ICON);
+            iv.setSmooth(true);
+            iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+            TreeItem<File> rootTree = new TreeItem<>(dir, iv);
+            searchFile(dir, rootTree);
+            treeView.setRoot(rootTree);
+            rootTree.setExpanded(true);
+            FileMonitor.get().addWatchFile(dir);
+            FileMonitor.get().setListener(this);
+            FileMonitor.get().watch();
+        }
+    }
+
+    @FXML
+    public void openNote() {
+        System.out.println("openNote");
     }
 
     @FXML
@@ -162,7 +200,49 @@ public class MainController implements Initializable {
         Platform.exit();
     }
 
+    private void searchFile(File fileOrDir, TreeItem<File> rootItem) {
+        File[] list = fileOrDir.listFiles();
+        if (list == null) {
+            return;
+        }
+        Consumer<File> consumer = f -> {
+            TreeItem<File> item = new TreeItem<>(f);
+            if (f.isDirectory()) {
+                ImageView iv = new ImageView(FOLDER_ICON);
+                iv.setSmooth(true);
+                iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+                item.setGraphic(iv);
+                rootItem.getChildren().add(item);
+                searchFile(f, item);
+            } else {
+                item.setGraphic(new ImageView(FILE_ICON));
+                rootItem.getChildren().add(item);
+            }
+        };
+        Arrays.stream(list).filter(f -> !f.isHidden() && f.isDirectory()).sorted().forEach(consumer);
+        Arrays.stream(list).filter(f -> !f.isHidden() && f.isFile()).sorted().forEach(consumer);
+    }
+
     private void changeWidth(Change<Number> numberChange) {
         splitPane.setDividerPosition(0, 0.2);
+    }
+
+    @Override
+    public void run() {
+        TreeItem<File> rootTree = treeView.getRoot();
+        File dir = rootTree.getValue();
+        ImageView iv = new ImageView(FOLDER_ICON);
+        iv.setSmooth(true);
+        iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+        TreeItem<File> root = new TreeItem<>(dir, iv);
+        searchFile(dir, root);
+        Platform.runLater(() -> {
+            treeView.setRoot(root);
+            root.setExpanded(true);
+        });
+        FileMonitor.get().stopWatch();
+        FileMonitor.get().addWatchFile(dir);
+        FileMonitor.get().setListener(this);
+        FileMonitor.get().watch();
     }
 }

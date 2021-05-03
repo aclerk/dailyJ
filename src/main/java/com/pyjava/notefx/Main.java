@@ -1,5 +1,7 @@
 package com.pyjava.notefx;
 
+import com.pyjava.notefx.file.FileMonitor;
+import com.pyjava.notefx.thread.NoteFxThreadPool;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,6 +19,7 @@ import java.net.URL;
  * @date 2021/4/25 14:17
  */
 public class Main extends Application {
+
     private static Stage main;
 
     public static void main(String[] args) {
@@ -35,7 +38,7 @@ public class Main extends Application {
         URL iconRes = getClass().getClassLoader().getResource("img/noteFx.png");
         assert resource != null && iconRes != null;
         Parent root = FXMLLoader.load(resource);
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 1000, 618);
         primaryStage.setTitle("noteFx");
         primaryStage.getIcons().add(new Image(iconRes.toURI().toString()));
         primaryStage.setScene(scene);
@@ -44,6 +47,9 @@ public class Main extends Application {
 
     @Override
     public void stop() {
+        FileMonitor.get().stopWatch();
+        NoteFxThreadPool.getThreadPool().shutdownNow();
+        NoteFxThreadPool.getFileMonitorPool().shutdownNow();
         main = null;
     }
 }

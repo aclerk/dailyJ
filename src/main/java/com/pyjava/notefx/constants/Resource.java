@@ -13,4 +13,6 @@ import java.util.Objects;
  */
 public class Resource {
     public final static Image PEN_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/pen-16.png")));
+    public final static Image FOLDER_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/folder-16.png")));
+    public final static Image FILE_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/file-16.png")));
 }

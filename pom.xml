@@ -81,7 +81,7 @@
                             <bundleJre>true</bundleJre>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>true</administratorRequired>
-                            <platform>mac</platform>
+                            <platform>auto</platform>
 
                             <winConfig>
                                 <icoFile>${basedir}/assets/windows/noteFx.ico</icoFile>

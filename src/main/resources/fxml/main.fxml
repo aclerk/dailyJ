@@ -23,8 +23,8 @@
                         <MenuItem onAction="#createFile">
                             <text>New File</text>
                         </MenuItem>
-                        <MenuItem onAction="#createHexo">
-                            <text>New Hexo</text>
+                        <MenuItem onAction="#createNote">
+                            <text>New Note</text>
                         </MenuItem>
                     </Menu>
                     <Menu>
@@ -32,8 +32,11 @@
                         <MenuItem onAction="#openFile">
                             <text>Open File</text>
                         </MenuItem>
-                        <MenuItem onAction="#openHexo">
-                            <text>Open Hexo</text>
+                        <MenuItem onAction="#openFolder">
+                            <text>Open Folder</text>
+                        </MenuItem>
+                        <MenuItem onAction="#openNote">
+                            <text>Open Note</text>
                         </MenuItem>
                     </Menu>
                     <SeparatorMenuItem/>
@@ -55,9 +58,8 @@
         </top>
         <center>
             <SplitPane fx:id="splitPane" BorderPane.alignment="CENTER">
-                <BorderPane fx:id="leftPane">
-
-                </BorderPane>
+                <TreeView fx:id="treeView" SplitPane.resizableWithParent="false">
+                </TreeView>
                 <TabPane fx:id="rightTab">
                 </TabPane>
             </SplitPane>
