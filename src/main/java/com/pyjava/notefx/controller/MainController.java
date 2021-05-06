@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -176,6 +177,22 @@ public class MainController implements Initializable, Runnable {
         File dir = chooser.showDialog(Main.get());
 
         if(dir != null && dir.exists()){
+            LinkedList<File> fileLinkedList = new LinkedList<>();
+            fileLinkedList.add(dir);
+            while(fileLinkedList.size() > 0){
+                File f = fileLinkedList.removeFirst();
+                File[] files = f.listFiles();
+                if(files == null){
+                    continue;
+                }
+                for (File file : files) {
+                    if(file.isDirectory()){
+                        fileLinkedList.addLast(file);
+                        FileMonitor.get().addWatchFile(file);
+                    }
+                }
+            }
+
             ImageView iv = new ImageView(FOLDER_ICON);
             iv.setSmooth(true);
             iv.setViewport(new Rectangle2D(0, 0, 16, 16));
@@ -231,6 +248,7 @@ public class MainController implements Initializable, Runnable {
     public void run() {
         TreeItem<File> rootTree = treeView.getRoot();
         File dir = rootTree.getValue();
+
         ImageView iv = new ImageView(FOLDER_ICON);
         iv.setSmooth(true);
         iv.setViewport(new Rectangle2D(0, 0, 16, 16));
@@ -241,6 +259,23 @@ public class MainController implements Initializable, Runnable {
             root.setExpanded(true);
         });
         FileMonitor.get().stopWatch();
+
+        LinkedList<File> fileLinkedList = new LinkedList<>();
+        fileLinkedList.add(dir);
+        while(fileLinkedList.size() > 0){
+            File f = fileLinkedList.removeFirst();
+            File[] files = f.listFiles();
+            if(files == null){
+                continue;
+            }
+            for (File file : files) {
+                if(file.isDirectory()){
+                    fileLinkedList.addLast(file);
+                    FileMonitor.get().addWatchFile(file);
+                }
+            }
+        }
+
         FileMonitor.get().addWatchFile(dir);
         FileMonitor.get().setListener(this);
         FileMonitor.get().watch();
