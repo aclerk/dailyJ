@@ -25,8 +25,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -42,7 +43,7 @@ import static com.pyjava.notefx.constants.Resource.FOLDER_ICON;
  * @version v1.0
  * @date 2021/4/25 14:18
  */
-public class MainController implements Initializable, Runnable {
+public class MainController implements Initializable {
 
     public static int untitledCount = 1;
 
@@ -59,17 +60,20 @@ public class MainController implements Initializable, Runnable {
     @FXML
     public TabPane rightTab;
     @FXML
-    public TreeView<File> treeView;
+    public TreeView<String> treeView;
 
+    private FileTreeItem fileTreeItem;
+
+    private File myDir;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         EventStreams.changesOf(rootPane.widthProperty()).subscribe(this::changeWidth);
         splitPane.getStyleClass().add("main-split");
         ObservableList<Tab> tabs = rightTab.getTabs();
-        if(tabs.size() <= 0){
+        if (tabs.size() <= 0) {
             FileTab fileTab = new FileTab();
-            fileTab.setText("Untitled-"+untitledCount);
+            fileTab.setText("Untitled-" + untitledCount);
             // 将空内容加入tab中
             TextArea textArea = fileTab.getTextArea();
             textArea.setText("");
@@ -80,11 +84,11 @@ public class MainController implements Initializable, Runnable {
     }
 
     @FXML
-    public void createFile(){
+    public void createFile() {
         // 新建文件时 展示未命名tab
         ObservableList<Tab> tabs = rightTab.getTabs();
         FileTab fileTab = new FileTab();
-        fileTab.setText("Untitled-"+untitledCount);
+        fileTab.setText("Untitled-" + untitledCount);
         untitledCount++;
         // 将空内容加入tab中
         TextArea textArea = fileTab.getTextArea();
@@ -97,7 +101,7 @@ public class MainController implements Initializable, Runnable {
     }
 
     @FXML
-    public void createNote(){
+    public void createNote() {
         System.out.println("create file");
     }
 
@@ -118,7 +122,7 @@ public class MainController implements Initializable, Runnable {
             FileTab tab = (FileTab) tabs.get(i);
             File f = tab.getFile();
             // unTitled的文件
-            if(null == f){
+            if (null == f) {
                 break;
             }
             boolean equals = f.getAbsolutePath().equals(file.getAbsolutePath());
@@ -136,7 +140,7 @@ public class MainController implements Initializable, Runnable {
         }
 
         // 如果该文件还没有打开,则
-        if(file != null){
+        if (file != null) {
             String fileName = file.getName();
 
             FutureTask<String> call = new FutureTask<>(() -> {
@@ -171,22 +175,30 @@ public class MainController implements Initializable, Runnable {
     }
 
     @FXML
-    public void openFolder(){
-        System.out.println("open folder");
+    public void openFolder() {
         DirectoryChooser chooser = new DirectoryChooser();
         File dir = chooser.showDialog(Main.get());
+        if(dir == null){
+            return;
+        }
+        this.myDir = dir;
 
-        if(dir != null && dir.exists()){
+        fileTreeItem = new FileTreeItem(dir.getName());
+        fileTreeItem.setExpanded(true);
+        fileTreeItem.setFile(dir);
+        iterateFiles(fileTreeItem);
+
+        if (dir.exists()) {
             LinkedList<File> fileLinkedList = new LinkedList<>();
             fileLinkedList.add(dir);
-            while(fileLinkedList.size() > 0){
+            while (fileLinkedList.size() > 0) {
                 File f = fileLinkedList.removeFirst();
                 File[] files = f.listFiles();
-                if(files == null){
+                if (files == null) {
                     continue;
                 }
                 for (File file : files) {
-                    if(file.isDirectory()){
+                    if (file.isDirectory()) {
                         fileLinkedList.addLast(file);
                         FileMonitor.get().addWatchFile(file);
                     }
@@ -196,8 +208,8 @@ public class MainController implements Initializable, Runnable {
             ImageView iv = new ImageView(FOLDER_ICON);
             iv.setSmooth(true);
             iv.setViewport(new Rectangle2D(0, 0, 16, 16));
-            TreeItem<File> rootTree = new TreeItem<>(dir, iv);
-            searchFile(dir, rootTree);
+            TreeItem<String> rootTree = new TreeItem<>(dir.getName(), iv);
+            buildTree(fileTreeItem, rootTree);
             treeView.setRoot(rootTree);
             rootTree.setExpanded(true);
             FileMonitor.get().addWatchFile(dir);
@@ -217,59 +229,45 @@ public class MainController implements Initializable, Runnable {
         Platform.exit();
     }
 
-    private void searchFile(File fileOrDir, TreeItem<File> rootItem) {
-        File[] list = fileOrDir.listFiles();
-        if (list == null) {
-            return;
-        }
-        Consumer<File> consumer = f -> {
-            TreeItem<File> item = new TreeItem<>(f);
-            if (f.isDirectory()) {
-                ImageView iv = new ImageView(FOLDER_ICON);
-                iv.setSmooth(true);
-                iv.setViewport(new Rectangle2D(0, 0, 16, 16));
-                item.setGraphic(iv);
-                rootItem.getChildren().add(item);
-                searchFile(f, item);
-            } else {
-                item.setGraphic(new ImageView(FILE_ICON));
-                rootItem.getChildren().add(item);
-            }
-        };
-        Arrays.stream(list).filter(f -> !f.isHidden() && f.isDirectory()).sorted().forEach(consumer);
-        Arrays.stream(list).filter(f -> !f.isHidden() && f.isFile()).sorted().forEach(consumer);
-    }
-
     private void changeWidth(Change<Number> numberChange) {
         splitPane.setDividerPosition(0, 0.2);
     }
 
-    @Override
-    public void run() {
-        TreeItem<File> rootTree = treeView.getRoot();
-        File dir = rootTree.getValue();
+    public void update() {
+        File dir = myDir;
 
         ImageView iv = new ImageView(FOLDER_ICON);
         iv.setSmooth(true);
         iv.setViewport(new Rectangle2D(0, 0, 16, 16));
-        TreeItem<File> root = new TreeItem<>(dir, iv);
-        searchFile(dir, root);
+        TreeItem<String> rootTree = new TreeItem<>(dir.getName(), iv);
+
+        // 获取新文件树
+        FileTreeItem changedFileTreeItem = new FileTreeItem(dir.getName());
+        changedFileTreeItem.setExpanded(fileTreeItem.getExpanded());
+        changedFileTreeItem.setFile(fileTreeItem.getFile());
+
+        iterateFiles(changedFileTreeItem);
+        // 将根据新文件树,将旧文件树数据拷贝过来
+        diffTwoTree(fileTreeItem, changedFileTreeItem);
+        fileTreeItem = changedFileTreeItem;
+
+        buildTree(fileTreeItem, rootTree);
         Platform.runLater(() -> {
-            treeView.setRoot(root);
-            root.setExpanded(true);
+            treeView.setRoot(rootTree);
+            rootTree.setExpanded(true);
         });
         FileMonitor.get().stopWatch();
 
         LinkedList<File> fileLinkedList = new LinkedList<>();
         fileLinkedList.add(dir);
-        while(fileLinkedList.size() > 0){
+        while (fileLinkedList.size() > 0) {
             File f = fileLinkedList.removeFirst();
             File[] files = f.listFiles();
-            if(files == null){
+            if (files == null) {
                 continue;
             }
             for (File file : files) {
-                if(file.isDirectory()){
+                if (file.isDirectory()) {
                     fileLinkedList.addLast(file);
                     FileMonitor.get().addWatchFile(file);
                 }
@@ -279,5 +277,138 @@ public class MainController implements Initializable, Runnable {
         FileMonitor.get().addWatchFile(dir);
         FileMonitor.get().setListener(this);
         FileMonitor.get().watch();
+    }
+
+    class FileTreeItem implements Comparable<FileTreeItem> {
+        private String name;
+        private Boolean isExpanded;
+        private File file;
+        private List<FileTreeItem> children;
+
+        public FileTreeItem(String name) {
+            this.name = name;
+            this.isExpanded = false;
+            this.children = new ArrayList<>();
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Boolean getExpanded() {
+            return isExpanded;
+        }
+
+        public void setExpanded(Boolean expanded) {
+            isExpanded = expanded;
+        }
+
+        public File getFile() {
+            return file;
+        }
+
+        public void setFile(File file) {
+            this.file = file;
+        }
+
+        public List<FileTreeItem> getChildren() {
+            return children;
+        }
+
+        public void setChildren(List<FileTreeItem> children) {
+            this.children = children;
+        }
+
+        @Override
+        public String toString() {
+            return "FileTreeItem{" +
+                    "name='" + name + '\'' +
+                    ", isExpanded=" + isExpanded +
+                    ", children=" + children +
+                    '}';
+        }
+
+        @Override
+        public int compareTo(FileTreeItem o) {
+            return this.getName().compareToIgnoreCase(o.getName());
+        }
+    }
+
+    private void iterateFiles(FileTreeItem fileTreeItem) {
+        File file = fileTreeItem.getFile();
+
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (null == files || files.length <= 0) {
+                return;
+            }
+
+            for (File fi : files) {
+                FileTreeItem fti = new FileTreeItem(fi.getName());
+                fti.setExpanded(false);
+                fti.setFile(fi);
+                fileTreeItem.getChildren().add(fti);
+                iterateFiles(fti);
+            }
+        } else {
+            FileTreeItem fti = new FileTreeItem(file.getName());
+            fti.setExpanded(false);
+            fti.setFile(file);
+            fileTreeItem.getChildren().add(fti);
+        }
+    }
+
+    private void diffTwoTree(FileTreeItem fileTreeItem, FileTreeItem changedFileTreeItem) {
+        if (!fileTreeItem.getName().equals(changedFileTreeItem.getName())) {
+            return;
+        }
+
+        File file = changedFileTreeItem.getFile();
+        if (file.isDirectory()) {
+            changedFileTreeItem.setExpanded(fileTreeItem.getExpanded());
+            List<FileTreeItem> children = fileTreeItem.getChildren();
+            List<FileTreeItem> children1 = changedFileTreeItem.getChildren();
+            if (children == null || children1 == null) {
+                return;
+            }
+            for (FileTreeItem child : children) {
+                for (FileTreeItem treeItem : children1) {
+                    diffTwoTree(child, treeItem);
+                }
+            }
+        } else if (file.isFile()) {
+            changedFileTreeItem.setExpanded(false);
+        }
+    }
+
+    private void buildTree(FileTreeItem fileTreeItem, TreeItem<String> rootItem) {
+        List<FileTreeItem> children = fileTreeItem.getChildren();
+        if (children == null) {
+            return;
+        }
+        Consumer<FileTreeItem> consumer = fti -> {
+            File fi = fti.getFile();
+            TreeItem<String> item = new TreeItem<>(fti.getName());
+            if (fi.isDirectory()) {
+                ImageView iv = new ImageView(FOLDER_ICON);
+                iv.setSmooth(true);
+                iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+                item.setGraphic(iv);
+                item.setExpanded(fti.getExpanded());
+                rootItem.getChildren().add(item);
+                buildTree(fti, item);
+            } else {
+                item.setGraphic(new ImageView(FILE_ICON));
+                rootItem.getChildren().add(item);
+            }
+            item.addEventHandler(TreeItem.branchExpandedEvent(),
+                    objectTreeModificationEvent -> fti.setExpanded(objectTreeModificationEvent.wasExpanded()));
+        };
+        children.stream().filter(f -> !f.getFile().isHidden() && f.getFile().isDirectory()).sorted().forEach(consumer);
+        children.stream().filter(f -> !f.getFile().isHidden() && f.getFile().isFile()).sorted().forEach(consumer);
     }
 }

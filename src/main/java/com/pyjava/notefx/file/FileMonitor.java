@@ -1,5 +1,6 @@
 package com.pyjava.notefx.file;
 
+import com.pyjava.notefx.controller.MainController;
 import com.pyjava.notefx.thread.NoteFxThreadPool;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class FileMonitor implements Runnable {
     private static FileMonitor monitor;
     private WatchService watchService;
     private Future<?> future;
-    private Runnable listener;
+    private MainController mainController;
 
     private FileMonitor() {
         try {
@@ -47,8 +48,8 @@ public class FileMonitor implements Runnable {
                     } else if (kind == StandardWatchEventKinds.OVERFLOW) {
                         System.out.println("覆盖=" + event.context());
                     }
-                    if (listener != null) {
-                        listener.run();
+                    if (mainController != null) {
+                        mainController.update();
                     }
                 }
                 boolean res = watchKey.reset();
@@ -71,7 +72,6 @@ public class FileMonitor implements Runnable {
 
     public void addWatchFile(File file) {
         try {
-            System.out.println(file.toURI());
             Paths.get(file.toURI()).register(watchService,
                     StandardWatchEventKinds.ENTRY_CREATE,
                     StandardWatchEventKinds.ENTRY_DELETE
@@ -82,8 +82,8 @@ public class FileMonitor implements Runnable {
         }
     }
 
-    public void setListener(Runnable listener) {
-        this.listener = listener;
+    public void setListener(MainController mainController) {
+        this.mainController = mainController;
     }
 
     public void watch() {
@@ -91,7 +91,9 @@ public class FileMonitor implements Runnable {
     }
 
     public void stopWatch() {
-        future.cancel(true);
+        if(future != null){
+            future.cancel(true);
+        }
         monitor = null;
     }
 }
