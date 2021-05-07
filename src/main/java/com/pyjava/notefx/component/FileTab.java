@@ -17,14 +17,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>描述: notefx使用的文件tab页 </p>
  *
  * @author zhaojj11
  * @version v1.0
  * @date 2021/4/28 0:41
  */
 public class FileTab extends Tab {
+    /**
+     * FileTab维护一个文件信息
+     */
     private File file;
+    
+    /**
+     * FileTab 维护自己的textarea
+     */
     private TextArea textArea = new TextArea();
 
     public FileTab() {
@@ -66,7 +73,17 @@ public class FileTab extends Tab {
         this.textArea = textArea;
     }
 
-    private void addListener(){
+    /**
+     * <p>描述:
+     *      1. 为FileTab添加文本被改变的监听
+     *      2. 为FileTab添加按键监听
+     * </p>
+     *
+     * @author zhaojj11
+     * @date 2021/5/8 0:50
+     * @since 1.0
+     */
+    private void addListener() {
         // 监听文本区域值改变,当改变时,提供修改图标,提示用户该文件已被修改
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             ImageView iv = new ImageView(Resource.PEN_ICON);
@@ -77,8 +94,8 @@ public class FileTab extends Tab {
         // 监听按键
         textArea.setOnKeyPressed((event) -> {
             // 监听按键 当ctrl和s键按下时触发文件保存功能
-            if(event.isControlDown() && event.getCode().getName().equals(KeyCode.S.getName())){
-                if(null == this.getFile()){
+            if (event.isControlDown() && event.getCode().getName().equals(KeyCode.S.getName())) {
+                if (null == this.getFile()) {
                     FileChooser fileChooser = new FileChooser();
                     FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
                     FileChooser.ExtensionFilter mdFilter = new FileChooser.ExtensionFilter("Markdown files (*.md)", "*.md");
@@ -90,17 +107,17 @@ public class FileTab extends Tab {
                     this.setText(fileName);
                 }
                 this.setGraphic(null);
-                CompletableFuture.supplyAsync(()->{
+                CompletableFuture.supplyAsync(() -> {
                     FileWriter fileWriter = null;
                     try {
-                        fileWriter = new FileWriter(this.getFile(),  StandardCharsets.UTF_8);
+                        fileWriter = new FileWriter(this.getFile(), StandardCharsets.UTF_8);
                         // 写入文件
                         fileWriter.write(textArea.getText());
                         fileWriter.flush();
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
-                        if(fileWriter != null){
+                        if (fileWriter != null) {
                             try {
                                 fileWriter.close();
                             } catch (IOException e) {

@@ -4,7 +4,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>
+ *     线程工厂
+ * </p>
  *
  * @author zhaojj11
  * @version v1.0

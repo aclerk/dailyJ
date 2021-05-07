@@ -12,7 +12,9 @@ import javafx.stage.Stage;
 import java.net.URL;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>
+ *     主应用
+ * </p>
  *
  * @author zhaojj11
  * @version v1.0

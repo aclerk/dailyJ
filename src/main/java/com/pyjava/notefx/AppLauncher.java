@@ -3,7 +3,9 @@ package com.pyjava.notefx;
 import javafx.application.Application;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>
+ *     应用启动类
+ * </p>
  *
  * @author zhaojj11
  * @version v1.0

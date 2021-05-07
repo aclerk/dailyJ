@@ -3,7 +3,9 @@ package com.pyjava.notefx.thread;
 import java.util.concurrent.*;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>
+ *     线程池
+ * </p>
  *
  * @author zhaojj11
  * @version v1.0
@@ -11,7 +13,13 @@ import java.util.concurrent.*;
  */
 public class NoteFxThreadPool {
 
+    /**
+     * 工作线程池
+     */
     private static final ExecutorService THREAD_POOL;
+    /**
+     * 监听线程池
+     */
     private static final ExecutorService FILE_MONITOR_POOL;
 
     static {
@@ -31,13 +39,29 @@ public class NoteFxThreadPool {
 
 
     /**
-     * 获取线程池
-     * @return 线程池
+     * <p>
+     *     获取工作线程池
+     * </p>
+     *
+     * @return java.util.concurrent.ExecutorService
+     * @author zhaojj11
+     * @date 2021/5/8 0:58
+     * @since 1.0
      */
     public static ExecutorService getThreadPool() {
         return THREAD_POOL;
     }
 
+    /**
+     * <p>
+     *     获取文件更新线程池
+     * </p>
+     *
+     * @return java.util.concurrent.ExecutorService
+     * @author zhaojj11
+     * @date 2021/5/8 0:57
+     * @since 1.0
+     */
     public static ExecutorService getFileMonitorPool() {
         return FILE_MONITOR_POOL;
     }

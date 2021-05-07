@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>描述: 文件更新监听器 </p>
  *
  * @author zhaojj11
  * @version v1.0
@@ -48,6 +48,7 @@ public class FileMonitor implements Runnable {
                     } else if (kind == StandardWatchEventKinds.OVERFLOW) {
                         System.out.println("覆盖=" + event.context());
                     }
+                    // 触发更新回调
                     if (mainController != null) {
                         mainController.update();
                     }

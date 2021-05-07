@@ -37,15 +37,13 @@ import static com.pyjava.notefx.constants.Resource.FILE_ICON;
 import static com.pyjava.notefx.constants.Resource.FOLDER_ICON;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>描述: 主视图控制器 </p>
  *
  * @author zhaojj11
  * @version v1.0
  * @date 2021/4/25 14:18
  */
 public class MainController implements Initializable {
-
-    public static int untitledCount = 1;
 
     @FXML
     public StackPane root;
@@ -62,14 +60,27 @@ public class MainController implements Initializable {
     @FXML
     public TreeView<String> treeView;
 
-    private FileTreeItem fileTreeItem;
+    /**
+     * 未命名文件计数
+     */
+    public static int untitledCount = 1;
 
+    /**
+     * 文件树对象
+     */
+    private FileTreeNode fileTreeNode;
+
+    /**
+     * 工作目录
+     */
     private File myDir;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // 监听主面板长度更新时,同步更新面板比例
         EventStreams.changesOf(rootPane.widthProperty()).subscribe(this::changeWidth);
         splitPane.getStyleClass().add("main-split");
+        // 初始化创建时创建新未命名tab
         ObservableList<Tab> tabs = rightTab.getTabs();
         if (tabs.size() <= 0) {
             FileTab fileTab = new FileTab();
@@ -183,10 +194,10 @@ public class MainController implements Initializable {
         }
         this.myDir = dir;
 
-        fileTreeItem = new FileTreeItem(dir.getName());
-        fileTreeItem.setExpanded(true);
-        fileTreeItem.setFile(dir);
-        iterateFiles(fileTreeItem);
+        fileTreeNode = new FileTreeNode(dir.getName());
+        fileTreeNode.setExpanded(true);
+        fileTreeNode.setFile(dir);
+        iterateFiles(fileTreeNode);
 
         if (dir.exists()) {
             LinkedList<File> fileLinkedList = new LinkedList<>();
@@ -209,7 +220,7 @@ public class MainController implements Initializable {
             iv.setSmooth(true);
             iv.setViewport(new Rectangle2D(0, 0, 16, 16));
             TreeItem<String> rootTree = new TreeItem<>(dir.getName(), iv);
-            buildTree(fileTreeItem, rootTree);
+            buildTree(fileTreeNode, rootTree);
             treeView.setRoot(rootTree);
             rootTree.setExpanded(true);
             FileMonitor.get().addWatchFile(dir);
@@ -242,16 +253,16 @@ public class MainController implements Initializable {
         TreeItem<String> rootTree = new TreeItem<>(dir.getName(), iv);
 
         // 获取新文件树
-        FileTreeItem changedFileTreeItem = new FileTreeItem(dir.getName());
-        changedFileTreeItem.setExpanded(fileTreeItem.getExpanded());
-        changedFileTreeItem.setFile(fileTreeItem.getFile());
+        FileTreeNode changedFileTreeNode = new FileTreeNode(dir.getName());
+        changedFileTreeNode.setExpanded(fileTreeNode.getExpanded());
+        changedFileTreeNode.setFile(fileTreeNode.getFile());
 
-        iterateFiles(changedFileTreeItem);
+        iterateFiles(changedFileTreeNode);
         // 将根据新文件树,将旧文件树数据拷贝过来
-        diffTwoTree(fileTreeItem, changedFileTreeItem);
-        fileTreeItem = changedFileTreeItem;
+        diffTwoTree(fileTreeNode, changedFileTreeNode);
+        fileTreeNode = changedFileTreeNode;
 
-        buildTree(fileTreeItem, rootTree);
+        buildTree(fileTreeNode, rootTree);
         Platform.runLater(() -> {
             treeView.setRoot(rootTree);
             rootTree.setExpanded(true);
@@ -279,13 +290,13 @@ public class MainController implements Initializable {
         FileMonitor.get().watch();
     }
 
-    class FileTreeItem implements Comparable<FileTreeItem> {
-        private String name;
+    static class FileTreeNode implements Comparable<FileTreeNode> {
+        private final String name;
         private Boolean isExpanded;
         private File file;
-        private List<FileTreeItem> children;
+        private final List<FileTreeNode> children;
 
-        public FileTreeItem(String name) {
+        public FileTreeNode(String name) {
             this.name = name;
             this.isExpanded = false;
             this.children = new ArrayList<>();
@@ -293,10 +304,6 @@ public class MainController implements Initializable {
 
         public String getName() {
             return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
 
         public Boolean getExpanded() {
@@ -315,17 +322,13 @@ public class MainController implements Initializable {
             this.file = file;
         }
 
-        public List<FileTreeItem> getChildren() {
+        public List<FileTreeNode> getChildren() {
             return children;
-        }
-
-        public void setChildren(List<FileTreeItem> children) {
-            this.children = children;
         }
 
         @Override
         public String toString() {
-            return "FileTreeItem{" +
+            return "FileTreeNode{" +
                     "name='" + name + '\'' +
                     ", isExpanded=" + isExpanded +
                     ", children=" + children +
@@ -333,13 +336,21 @@ public class MainController implements Initializable {
         }
 
         @Override
-        public int compareTo(FileTreeItem o) {
+        public int compareTo(FileTreeNode o) {
             return this.getName().compareToIgnoreCase(o.getName());
         }
     }
 
-    private void iterateFiles(FileTreeItem fileTreeItem) {
-        File file = fileTreeItem.getFile();
+    /**
+     * <p>遍历文件</p>
+     *
+     * @param fileTreeNode : {@link FileTreeNode} 文件树节点
+     * @author zhaojj11
+     * @date 2021/5/8 0:51
+     * @since 1.0
+     */
+    private void iterateFiles(FileTreeNode fileTreeNode) {
+        File file = fileTreeNode.getFile();
 
         if (file.isDirectory()) {
             File[] files = file.listFiles();
@@ -348,49 +359,71 @@ public class MainController implements Initializable {
             }
 
             for (File fi : files) {
-                FileTreeItem fti = new FileTreeItem(fi.getName());
+                FileTreeNode fti = new FileTreeNode(fi.getName());
                 fti.setExpanded(false);
                 fti.setFile(fi);
-                fileTreeItem.getChildren().add(fti);
+                fileTreeNode.getChildren().add(fti);
                 iterateFiles(fti);
             }
         } else {
-            FileTreeItem fti = new FileTreeItem(file.getName());
+            FileTreeNode fti = new FileTreeNode(file.getName());
             fti.setExpanded(false);
             fti.setFile(file);
-            fileTreeItem.getChildren().add(fti);
+            fileTreeNode.getChildren().add(fti);
         }
     }
 
-    private void diffTwoTree(FileTreeItem fileTreeItem, FileTreeItem changedFileTreeItem) {
-        if (!fileTreeItem.getName().equals(changedFileTreeItem.getName())) {
+    /**
+     * <p>
+     *     对比旧文件树和触发更新后的文件树,将新文件树的节点更新到旧文件树上
+     * </p>
+     *
+     * @param fileTreeNode :  {@link FileTreeNode} 旧文件树
+     * @param changedFileTreeNode : {@link FileTreeNode} 旧文件树
+     * @author zhaojj11
+     * @date 2021/5/8 0:53
+     * @since 1.0
+     */
+    private void diffTwoTree(FileTreeNode fileTreeNode, FileTreeNode changedFileTreeNode) {
+        if (!fileTreeNode.getName().equals(changedFileTreeNode.getName())) {
             return;
         }
 
-        File file = changedFileTreeItem.getFile();
+        File file = changedFileTreeNode.getFile();
         if (file.isDirectory()) {
-            changedFileTreeItem.setExpanded(fileTreeItem.getExpanded());
-            List<FileTreeItem> children = fileTreeItem.getChildren();
-            List<FileTreeItem> children1 = changedFileTreeItem.getChildren();
+            changedFileTreeNode.setExpanded(fileTreeNode.getExpanded());
+            List<FileTreeNode> children = fileTreeNode.getChildren();
+            List<FileTreeNode> children1 = changedFileTreeNode.getChildren();
             if (children == null || children1 == null) {
                 return;
             }
-            for (FileTreeItem child : children) {
-                for (FileTreeItem treeItem : children1) {
+            for (FileTreeNode child : children) {
+                for (FileTreeNode treeItem : children1) {
                     diffTwoTree(child, treeItem);
                 }
             }
         } else if (file.isFile()) {
-            changedFileTreeItem.setExpanded(false);
+            changedFileTreeNode.setExpanded(false);
         }
     }
 
-    private void buildTree(FileTreeItem fileTreeItem, TreeItem<String> rootItem) {
-        List<FileTreeItem> children = fileTreeItem.getChildren();
+    /**
+     * <p>
+     *     根据{@link FileTreeNode} 构建 {@link TreeItem}
+     * </p>
+     *
+     * @param fileTreeNode : 文件树节点
+     * @param rootItem : TreeItem
+     * @author zhaojj11
+     * @date 2021/5/8 0:54
+     * @since 1.0
+     */
+    private void buildTree(FileTreeNode fileTreeNode, TreeItem<String> rootItem) {
+        List<FileTreeNode> children = fileTreeNode.getChildren();
         if (children == null) {
             return;
         }
-        Consumer<FileTreeItem> consumer = fti -> {
+        Consumer<FileTreeNode> consumer = fti -> {
             File fi = fti.getFile();
             TreeItem<String> item = new TreeItem<>(fti.getName());
             if (fi.isDirectory()) {
