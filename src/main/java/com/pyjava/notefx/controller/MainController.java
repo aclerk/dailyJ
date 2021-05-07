@@ -2,6 +2,8 @@ package com.pyjava.notefx.controller;
 
 import com.pyjava.notefx.Main;
 import com.pyjava.notefx.component.FileTab;
+import com.pyjava.notefx.component.TreeCellFactory;
+import com.pyjava.notefx.entity.FileTreeNode;
 import com.pyjava.notefx.file.FileMonitor;
 import com.pyjava.notefx.thread.NoteFxThreadPool;
 import javafx.application.Platform;
@@ -25,7 +27,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -58,7 +59,7 @@ public class MainController implements Initializable {
     @FXML
     public TabPane rightTab;
     @FXML
-    public TreeView<String> treeView;
+    public TreeView<FileTreeNode> treeView;
 
     /**
      * 未命名文件计数
@@ -92,6 +93,8 @@ public class MainController implements Initializable {
             untitledCount++;
             tabs.add(fileTab);
         }
+        treeView.setEditable(false);
+        treeView.setCellFactory(param -> new TreeCellFactory(this));
     }
 
     @FXML
@@ -219,7 +222,7 @@ public class MainController implements Initializable {
             ImageView iv = new ImageView(FOLDER_ICON);
             iv.setSmooth(true);
             iv.setViewport(new Rectangle2D(0, 0, 16, 16));
-            TreeItem<String> rootTree = new TreeItem<>(dir.getName(), iv);
+            TreeItem<FileTreeNode> rootTree = new TreeItem<>(fileTreeNode, iv);
             buildTree(fileTreeNode, rootTree);
             treeView.setRoot(rootTree);
             rootTree.setExpanded(true);
@@ -250,7 +253,7 @@ public class MainController implements Initializable {
         ImageView iv = new ImageView(FOLDER_ICON);
         iv.setSmooth(true);
         iv.setViewport(new Rectangle2D(0, 0, 16, 16));
-        TreeItem<String> rootTree = new TreeItem<>(dir.getName(), iv);
+        TreeItem<FileTreeNode> rootTree = new TreeItem<>(fileTreeNode, iv);
 
         // 获取新文件树
         FileTreeNode changedFileTreeNode = new FileTreeNode(dir.getName());
@@ -290,56 +293,6 @@ public class MainController implements Initializable {
         FileMonitor.get().watch();
     }
 
-    static class FileTreeNode implements Comparable<FileTreeNode> {
-        private final String name;
-        private Boolean isExpanded;
-        private File file;
-        private final List<FileTreeNode> children;
-
-        public FileTreeNode(String name) {
-            this.name = name;
-            this.isExpanded = false;
-            this.children = new ArrayList<>();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Boolean getExpanded() {
-            return isExpanded;
-        }
-
-        public void setExpanded(Boolean expanded) {
-            isExpanded = expanded;
-        }
-
-        public File getFile() {
-            return file;
-        }
-
-        public void setFile(File file) {
-            this.file = file;
-        }
-
-        public List<FileTreeNode> getChildren() {
-            return children;
-        }
-
-        @Override
-        public String toString() {
-            return "FileTreeNode{" +
-                    "name='" + name + '\'' +
-                    ", isExpanded=" + isExpanded +
-                    ", children=" + children +
-                    '}';
-        }
-
-        @Override
-        public int compareTo(FileTreeNode o) {
-            return this.getName().compareToIgnoreCase(o.getName());
-        }
-    }
 
     /**
      * <p>遍历文件</p>
@@ -418,14 +371,14 @@ public class MainController implements Initializable {
      * @date 2021/5/8 0:54
      * @since 1.0
      */
-    private void buildTree(FileTreeNode fileTreeNode, TreeItem<String> rootItem) {
+    private void buildTree(FileTreeNode fileTreeNode, TreeItem<FileTreeNode> rootItem) {
         List<FileTreeNode> children = fileTreeNode.getChildren();
         if (children == null) {
             return;
         }
         Consumer<FileTreeNode> consumer = fti -> {
             File fi = fti.getFile();
-            TreeItem<String> item = new TreeItem<>(fti.getName());
+            TreeItem<FileTreeNode> item = new TreeItem<>(fti);
             if (fi.isDirectory()) {
                 ImageView iv = new ImageView(FOLDER_ICON);
                 iv.setSmooth(true);
