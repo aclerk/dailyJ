@@ -81,7 +81,7 @@
                         StackPane.alignment="CENTER_RIGHT">
 
                     <Label fx:id="coordinate"  wrapText="true"/>
-                    <Label fx:id="textType"  wrapText="true" text="markdown"/>
+                    <Label fx:id="textType"  wrapText="true"/>
                 </HBox>
 
             </StackPane>

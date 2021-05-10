@@ -1,5 +1,6 @@
 package com.pyjava.notefx.component;
 
+import com.pyjava.notefx.constants.Constants;
 import com.pyjava.notefx.controller.MainController;
 import com.pyjava.notefx.entity.FileTreeNode;
 import com.pyjava.notefx.thread.NoteFxThreadPool;
@@ -13,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import org.reactfx.EventStreams;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,8 +31,6 @@ import java.util.concurrent.FutureTask;
  */
 public class TreeCellFactory extends TreeCell<FileTreeNode> {
 
-    private MainController mainController;
-
     public TreeCellFactory(MainController mainController) {
         EventStreams.eventsOf(this, MouseEvent.MOUSE_CLICKED)
                 .filter(mouseEvent ->
@@ -38,8 +38,33 @@ public class TreeCellFactory extends TreeCell<FileTreeNode> {
                                 && mouseEvent.getButton() == MouseButton.PRIMARY
                                 && mouseEvent.getClickCount()==2)
                 .subscribe(mouseEvent -> {
-                    FileTreeNode item = getItem();
+                    // 查看当前文件是否已经被打开
+                    int index = -1;
                     ObservableList<Tab> tabs = mainController.rightTab.getTabs();
+                    for (int i = 0; i < tabs.size(); i++) {
+                        FileTab tab = (FileTab) tabs.get(i);
+                        File f = tab.getFile();
+                        // unTitled的文件
+                        if (null == f) {
+                            continue;
+                        }
+                        boolean equals = f.getAbsolutePath().equals(getItem().getFile().getAbsolutePath());
+                        if (equals) {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    // 如果已经打开该文件,则将该文件变成选择状态
+                    if (index != -1) {
+                        SingleSelectionModel<Tab> selectionModel = mainController.rightTab.getSelectionModel();
+                        selectionModel.select(index);
+                        return;
+                    }
+
+                    // 如果文件还为打开,则打开对应tab
+                    FileTreeNode item = getItem();
+
                     FileTab fileTab = new FileTab(item.getFile());
                     fileTab.setText(item.getName());
                     // 将空内容加入tab中
@@ -67,6 +92,12 @@ public class TreeCellFactory extends TreeCell<FileTreeNode> {
                     tabs.add(fileTab);
                     SingleSelectionModel<Tab> selectionModel = mainController.rightTab.getSelectionModel();
                     selectionModel.select(fileTab);
+                    String extension = item.getName().substring(item.getName().lastIndexOf("."));
+                    if(Constants.MD.equals(extension)){
+                        mainController.textType.setText("markdown");
+                    }else if(Constants.TXT.equals(extension)){
+                        mainController.textType.setText("txt");
+                    }
                 });
     }
 

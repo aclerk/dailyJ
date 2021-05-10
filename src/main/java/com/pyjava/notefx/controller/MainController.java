@@ -3,6 +3,7 @@ package com.pyjava.notefx.controller;
 import com.pyjava.notefx.Main;
 import com.pyjava.notefx.component.FileTab;
 import com.pyjava.notefx.component.TreeCellFactory;
+import com.pyjava.notefx.constants.Constants;
 import com.pyjava.notefx.entity.FileTreeNode;
 import com.pyjava.notefx.file.FileMonitor;
 import com.pyjava.notefx.thread.NoteFxThreadPool;
@@ -93,8 +94,27 @@ public class MainController implements Initializable {
             untitledCount++;
             tabs.add(fileTab);
         }
+        // 监听获取tabpane中tab对应文件类型
+        rightTab.getSelectionModel().selectedItemProperty().addListener((observableValue, oldTab, newTab) -> {
+            textType.setText("");
+            FileTab fileTab = (FileTab) newTab;
+            if (fileTab == null) {
+                return;
+            }
+            File file = fileTab.getFile();
+            if (null != file) {
+                String extension = file.getName().substring(file.getName().lastIndexOf("."));
+                if (Constants.MD.equals(extension)) {
+                    textType.setText("markdown");
+                } else if (Constants.TXT.equals(extension)) {
+                    textType.setText("txt");
+                }
+            }
+        });
+
         treeView.setEditable(false);
         treeView.setCellFactory(param -> new TreeCellFactory(this));
+
     }
 
     @FXML
@@ -137,7 +157,7 @@ public class MainController implements Initializable {
             File f = tab.getFile();
             // unTitled的文件
             if (null == f) {
-                break;
+                continue;
             }
             boolean equals = f.getAbsolutePath().equals(file.getAbsolutePath());
             if (equals) {
@@ -185,6 +205,13 @@ public class MainController implements Initializable {
             // 将刚打开的文件的tab置为选中状态
             SingleSelectionModel<Tab> selectionModel = rightTab.getSelectionModel();
             selectionModel.select(fileTab);
+
+            String extension = fileName.substring(fileName.lastIndexOf("."));
+            if (Constants.MD.equals(extension)) {
+                textType.setText("markdown");
+            } else if (Constants.TXT.equals(extension)) {
+                textType.setText("txt");
+            }
         }
     }
 
@@ -192,7 +219,7 @@ public class MainController implements Initializable {
     public void openFolder() {
         DirectoryChooser chooser = new DirectoryChooser();
         File dir = chooser.showDialog(Main.get());
-        if(dir == null){
+        if (dir == null) {
             return;
         }
         this.myDir = dir;
@@ -328,10 +355,10 @@ public class MainController implements Initializable {
 
     /**
      * <p>
-     *     对比旧文件树和触发更新后的文件树,将新文件树的节点更新到旧文件树上
+     * 对比旧文件树和触发更新后的文件树,将新文件树的节点更新到旧文件树上
      * </p>
      *
-     * @param fileTreeNode :  {@link FileTreeNode} 旧文件树
+     * @param fileTreeNode        :  {@link FileTreeNode} 旧文件树
      * @param changedFileTreeNode : {@link FileTreeNode} 旧文件树
      * @author zhaojj11
      * @date 2021/5/8 0:53
@@ -362,11 +389,11 @@ public class MainController implements Initializable {
 
     /**
      * <p>
-     *     根据{@link FileTreeNode} 构建 {@link TreeItem}
+     * 根据{@link FileTreeNode} 构建 {@link TreeItem}
      * </p>
      *
      * @param fileTreeNode : 文件树节点
-     * @param rootItem : TreeItem
+     * @param rootItem     : TreeItem
      * @author zhaojj11
      * @date 2021/5/8 0:54
      * @since 1.0
