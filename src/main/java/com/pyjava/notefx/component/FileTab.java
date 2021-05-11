@@ -28,7 +28,7 @@ public class FileTab extends Tab {
      * FileTab维护一个文件信息
      */
     private File file;
-    
+
     /**
      * FileTab 维护自己的textarea
      */
@@ -75,8 +75,8 @@ public class FileTab extends Tab {
 
     /**
      * <p>描述:
-     *      1. 为FileTab添加文本被改变的监听
-     *      2. 为FileTab添加按键监听
+     * 1. 为FileTab添加文本被改变的监听
+     * 2. 为FileTab添加按键监听
      * </p>
      *
      * @author zhaojj11
@@ -102,6 +102,10 @@ public class FileTab extends Tab {
                     fileChooser.getExtensionFilters().addAll(txtFilter, mdFilter);
                     fileChooser.setTitle("保存文件");
                     File file = fileChooser.showSaveDialog(Main.get());
+                    // 如果当前没有选择到文件,则直接返回
+                    if (null == file) {
+                        return;
+                    }
                     this.setFile(file);
                     String fileName = file.getName();
                     this.setText(fileName);
