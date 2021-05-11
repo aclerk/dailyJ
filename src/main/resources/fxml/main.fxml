@@ -44,16 +44,6 @@
                         <text>exit</text>
                     </MenuItem>
                 </Menu>
-
-                <Menu text="Edit">
-                </Menu>
-
-                <Menu text="View">
-                </Menu>
-
-                <Menu text="Help">
-                </Menu>
-
             </MenuBar>
         </top>
         <center>
