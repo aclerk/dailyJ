@@ -1,6 +1,6 @@
 package com.pyjava.notefx.component;
 
-import com.pyjava.notefx.constants.Constants;
+import com.pyjava.notefx.Main;
 import com.pyjava.notefx.controller.MainController;
 import com.pyjava.notefx.entity.FileTreeNode;
 import com.pyjava.notefx.thread.NoteFxThreadPool;
@@ -31,7 +31,8 @@ import java.util.concurrent.FutureTask;
  */
 public class TreeCellFactory extends TreeCell<FileTreeNode> {
 
-    public TreeCellFactory(MainController mainController) {
+    public TreeCellFactory() {
+        MainController mainController = Main.getMainController();
         EventStreams.eventsOf(this, MouseEvent.MOUSE_CLICKED)
                 .filter(mouseEvent ->
                         getItem() != null && !getItem().getFile().isDirectory()
@@ -92,12 +93,7 @@ public class TreeCellFactory extends TreeCell<FileTreeNode> {
                     tabs.add(fileTab);
                     SingleSelectionModel<Tab> selectionModel = mainController.rightTab.getSelectionModel();
                     selectionModel.select(fileTab);
-                    String extension = item.getName().substring(item.getName().lastIndexOf("."));
-                    if(Constants.MD.equals(extension)){
-                        mainController.textType.setText("markdown");
-                    }else if(Constants.TXT.equals(extension)){
-                        mainController.textType.setText("txt");
-                    }
+                    mainController.textType.setText(item.getFileType().getType());
                 });
     }
 

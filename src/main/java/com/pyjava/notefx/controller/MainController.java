@@ -79,6 +79,7 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        Main.setMainController(this);
         // 监听主面板长度更新时,同步更新面板比例
         EventStreams.changesOf(rootPane.widthProperty()).subscribe(this::changeWidth);
         splitPane.getStyleClass().add("main-split");
@@ -103,17 +104,12 @@ public class MainController implements Initializable {
             }
             File file = fileTab.getFile();
             if (null != file) {
-                String extension = file.getName().substring(file.getName().lastIndexOf("."));
-                if (Constants.MD.equals(extension)) {
-                    textType.setText("markdown");
-                } else if (Constants.TXT.equals(extension)) {
-                    textType.setText("txt");
-                }
+                textType.setText(fileTab.getFileType().getType());
             }
         });
 
         treeView.setEditable(false);
-        treeView.setCellFactory(param -> new TreeCellFactory(this));
+        treeView.setCellFactory(param -> new TreeCellFactory());
 
     }
 
@@ -224,7 +220,7 @@ public class MainController implements Initializable {
         }
         this.myDir = dir;
 
-        fileTreeNode = new FileTreeNode(dir.getName());
+        fileTreeNode = new FileTreeNode(dir);
         fileTreeNode.setExpanded(true);
         fileTreeNode.setFile(dir);
         iterateFiles(fileTreeNode);
@@ -283,7 +279,7 @@ public class MainController implements Initializable {
         TreeItem<FileTreeNode> rootTree = new TreeItem<>(fileTreeNode, iv);
 
         // 获取新文件树
-        FileTreeNode changedFileTreeNode = new FileTreeNode(dir.getName());
+        FileTreeNode changedFileTreeNode = new FileTreeNode(dir);
         changedFileTreeNode.setExpanded(fileTreeNode.getExpanded());
         changedFileTreeNode.setFile(fileTreeNode.getFile());
 
@@ -339,14 +335,14 @@ public class MainController implements Initializable {
             }
 
             for (File fi : files) {
-                FileTreeNode fti = new FileTreeNode(fi.getName());
+                FileTreeNode fti = new FileTreeNode(fi);
                 fti.setExpanded(false);
                 fti.setFile(fi);
                 fileTreeNode.getChildren().add(fti);
                 iterateFiles(fti);
             }
         } else {
-            FileTreeNode fti = new FileTreeNode(file.getName());
+            FileTreeNode fti = new FileTreeNode(file);
             fti.setExpanded(false);
             fti.setFile(file);
             fileTreeNode.getChildren().add(fti);

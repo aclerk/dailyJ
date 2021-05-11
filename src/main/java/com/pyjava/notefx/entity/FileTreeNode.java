@@ -1,5 +1,8 @@
 package com.pyjava.notefx.entity;
 
+import com.pyjava.notefx.constants.Constants;
+import com.pyjava.notefx.constants.FileType;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +18,24 @@ import java.util.List;
 public class FileTreeNode implements Comparable<FileTreeNode> {
     private final String name;
     private Boolean isExpanded;
+    private FileType fileType;
     private File file;
     private final List<FileTreeNode> children;
 
-    public FileTreeNode(String name) {
-        this.name = name;
+    public FileTreeNode(File file) {
+        this.name = file.getName();
+        this.file = file;
         this.isExpanded = false;
         this.children = new ArrayList<>();
+        // 判断文件类型
+        if(file.isFile()){
+            String extension = file.getName().substring(file.getName().lastIndexOf("."));
+            if (Constants.MD.equals(extension)) {
+                this.fileType = FileType.MD;
+            } else if (Constants.TXT.equals(extension)) {
+                this.fileType = FileType.TXT;
+            }
+        }
     }
 
     public String getName() {
@@ -56,5 +70,9 @@ public class FileTreeNode implements Comparable<FileTreeNode> {
     @Override
     public int compareTo(FileTreeNode o) {
         return this.getName().compareToIgnoreCase(o.getName());
+    }
+
+    public FileType getFileType() {
+        return fileType;
     }
 }

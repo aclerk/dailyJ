@@ -1,5 +1,6 @@
 package com.pyjava.notefx;
 
+import com.pyjava.notefx.controller.MainController;
 import com.pyjava.notefx.file.FileMonitor;
 import com.pyjava.notefx.thread.NoteFxThreadPool;
 import javafx.application.Application;
@@ -22,6 +23,7 @@ import java.net.URL;
  */
 public class Main extends Application {
 
+    private static MainController mainController;
     private static Stage main;
 
     public static void main(String[] args) {
@@ -30,6 +32,14 @@ public class Main extends Application {
 
     public static Stage get() {
         return main;
+    }
+
+    public static MainController getMainController() {
+        return mainController;
+    }
+
+    public static void setMainController(MainController mainController) {
+        Main.mainController = mainController;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.pyjava.notefx.component;
 
 import com.pyjava.notefx.Main;
+import com.pyjava.notefx.constants.Constants;
+import com.pyjava.notefx.constants.FileType;
 import com.pyjava.notefx.constants.Resource;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -34,6 +36,8 @@ public class FileTab extends Tab {
      */
     private TextArea textArea = new TextArea();
 
+    private FileType fileType;
+
     public FileTab() {
         super();
         this.addListener();
@@ -42,18 +46,21 @@ public class FileTab extends Tab {
     public FileTab(File file) {
         super();
         this.file = file;
+        this.initFileType(file);
         this.addListener();
     }
 
     public FileTab(String s, File file) {
         super(s);
         this.file = file;
+        this.initFileType(file);
         this.addListener();
     }
 
     public FileTab(String s, Node node, File file) {
         super(s, node);
         this.file = file;
+        this.initFileType(file);
         this.addListener();
     }
 
@@ -71,6 +78,19 @@ public class FileTab extends Tab {
 
     public void setTextArea(TextArea textArea) {
         this.textArea = textArea;
+    }
+
+    public FileType getFileType() {
+        return fileType;
+    }
+
+    private void initFileType(File file){
+        String extension = file.getName().substring(file.getName().lastIndexOf("."));
+        if (Constants.MD.equals(extension)) {
+            this.fileType = FileType.MD;
+        } else if (Constants.TXT.equals(extension)) {
+            this.fileType = FileType.TXT;
+        }
     }
 
     /**
@@ -109,6 +129,9 @@ public class FileTab extends Tab {
                     this.setFile(file);
                     String fileName = file.getName();
                     this.setText(fileName);
+                    this.initFileType(file);
+                    // 展示右下角文件类型
+                    Main.getMainController().textType.setText(getFileType().getType());
                 }
                 this.setGraphic(null);
                 CompletableFuture.supplyAsync(() -> {
