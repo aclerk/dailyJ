@@ -1,4 +1,4 @@
-package com.pyjava.notefx.thread;
+package com.pyjava.daily.thread;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,7 +34,7 @@ public class CommonThreadFactory implements ThreadFactory {
     private String name;
 
     public CommonThreadFactory() {
-        this.namePrefix = "notefx-pool-" + POOL_NUMBER.getAndIncrement() + "-thread";
+        this.namePrefix = "daily-pool-" + POOL_NUMBER.getAndIncrement() + "-thread";
     }
 
     public CommonThreadFactory(String name) {

@@ -1,7 +1,7 @@
-package com.pyjava.notefx.entity;
+package com.pyjava.daily.entity;
 
-import com.pyjava.notefx.constants.Constants;
-import com.pyjava.notefx.constants.FileType;
+import com.pyjava.daily.constants.Constants;
+import com.pyjava.daily.constants.FileType;
 
 import java.io.File;
 import java.util.ArrayList;

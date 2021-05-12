@@ -1,8 +1,8 @@
-package com.pyjava.notefx;
+package com.pyjava.daily;
 
-import com.pyjava.notefx.controller.MainController;
-import com.pyjava.notefx.file.FileMonitor;
-import com.pyjava.notefx.thread.NoteFxThreadPool;
+import com.pyjava.daily.controller.MainController;
+import com.pyjava.daily.file.FileMonitor;
+import com.pyjava.daily.thread.NoteFxThreadPool;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -47,11 +47,11 @@ public class Main extends Application {
         main = primaryStage;
 
         URL resource = getClass().getClassLoader().getResource("fxml/main.fxml");
-        URL iconRes = getClass().getClassLoader().getResource("img/noteFx.png");
+        URL iconRes = getClass().getClassLoader().getResource("img/daily.png");
         assert resource != null && iconRes != null;
         Parent root = FXMLLoader.load(resource);
         Scene scene = new Scene(root, 1000, 618);
-        primaryStage.setTitle("noteFx");
+        primaryStage.setTitle("daily");
         primaryStage.getIcons().add(new Image(iconRes.toURI().toString()));
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -1,12 +1,12 @@
-package com.pyjava.notefx.controller;
+package com.pyjava.daily.controller;
 
-import com.pyjava.notefx.Main;
-import com.pyjava.notefx.component.FileTab;
-import com.pyjava.notefx.component.TreeCellFactory;
-import com.pyjava.notefx.constants.Constants;
-import com.pyjava.notefx.entity.FileTreeNode;
-import com.pyjava.notefx.file.FileMonitor;
-import com.pyjava.notefx.thread.NoteFxThreadPool;
+import com.pyjava.daily.Main;
+import com.pyjava.daily.component.FileTab;
+import com.pyjava.daily.component.TreeCellFactory;
+import com.pyjava.daily.constants.Constants;
+import com.pyjava.daily.entity.FileTreeNode;
+import com.pyjava.daily.file.FileMonitor;
+import com.pyjava.daily.thread.NoteFxThreadPool;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -35,8 +35,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 
-import static com.pyjava.notefx.constants.Resource.FILE_ICON;
-import static com.pyjava.notefx.constants.Resource.FOLDER_ICON;
+import static com.pyjava.daily.constants.Resource.FILE_ICON;
+import static com.pyjava.daily.constants.Resource.FOLDER_ICON;
 
 /**
  * <p>描述: 主视图控制器 </p>

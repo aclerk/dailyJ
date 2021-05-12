@@ -1,4 +1,4 @@
-package com.pyjava.notefx;
+package com.pyjava.daily;
 
 import javafx.application.Application;
 

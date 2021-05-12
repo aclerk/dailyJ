@@ -1,4 +1,4 @@
-package com.pyjava.notefx.constants;
+package com.pyjava.daily.constants;
 
 /**
  * <p>描述: [功能描述] </p>

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.pyjava</groupId>
-    <artifactId>noteFx</artifactId>
+    <artifactId>daily</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -42,7 +42,7 @@
     </dependencies>
 
     <build>
-        <finalName>noteFx</finalName>
+        <finalName>daily</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -77,14 +77,14 @@
                         </goals>
                         <configuration>
                             <assetsDir>${basedir}/assets</assetsDir>
-                            <mainClass>com.pyjava.notefx.AppLauncher</mainClass>
+                            <mainClass>com.pyjava.daily.AppLauncher</mainClass>
                             <bundleJre>true</bundleJre>
                             <generateInstaller>true</generateInstaller>
                             <administratorRequired>true</administratorRequired>
                             <platform>auto</platform>
 
                             <winConfig>
-                                <icoFile>${basedir}/assets/windows/noteFx.ico</icoFile>
+                                <icoFile>${basedir}/assets/windows/daily.ico</icoFile>
                                 <setupLanguages>
                                     <english>compiler:Default.isl</english>
                                     <chinese>compiler:Languages\Chinese.isl</chinese>

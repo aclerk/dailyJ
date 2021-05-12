@@ -1,7 +1,7 @@
-package com.pyjava.notefx.file;
+package com.pyjava.daily.file;
 
-import com.pyjava.notefx.controller.MainController;
-import com.pyjava.notefx.thread.NoteFxThreadPool;
+import com.pyjava.daily.controller.MainController;
+import com.pyjava.daily.thread.NoteFxThreadPool;
 
 import java.io.File;
 import java.io.IOException;

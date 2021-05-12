@@ -1,9 +1,9 @@
-package com.pyjava.notefx.component;
+package com.pyjava.daily.component;
 
-import com.pyjava.notefx.Main;
-import com.pyjava.notefx.controller.MainController;
-import com.pyjava.notefx.entity.FileTreeNode;
-import com.pyjava.notefx.thread.NoteFxThreadPool;
+import com.pyjava.daily.Main;
+import com.pyjava.daily.controller.MainController;
+import com.pyjava.daily.entity.FileTreeNode;
+import com.pyjava.daily.thread.NoteFxThreadPool;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;

@@ -1,9 +1,9 @@
-package com.pyjava.notefx.component;
+package com.pyjava.daily.component;
 
-import com.pyjava.notefx.Main;
-import com.pyjava.notefx.constants.Constants;
-import com.pyjava.notefx.constants.FileType;
-import com.pyjava.notefx.constants.Resource;
+import com.pyjava.daily.Main;
+import com.pyjava.daily.constants.Constants;
+import com.pyjava.daily.constants.FileType;
+import com.pyjava.daily.constants.Resource;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * <p>描述: notefx使用的文件tab页 </p>
+ * <p>描述: daily使用的文件tab页 </p>
  *
  * @author zhaojj11
  * @version v1.0

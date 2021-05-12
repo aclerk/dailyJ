@@ -1,4 +1,4 @@
-package com.pyjava.notefx.constants;
+package com.pyjava.daily.constants;
 
 import javafx.scene.image.Image;
 

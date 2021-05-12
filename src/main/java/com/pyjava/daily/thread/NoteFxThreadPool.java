@@ -1,4 +1,4 @@
-package com.pyjava.notefx.thread;
+package com.pyjava.daily.thread;
 
 import java.util.concurrent.*;
 
