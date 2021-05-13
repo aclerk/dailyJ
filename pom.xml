@@ -29,15 +29,49 @@
             <version>${javafx.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.reactfx</groupId>
-            <artifactId>reactfx</artifactId>
-            <version>1.4.1</version>
+            <groupId>de.saxsys</groupId>
+            <artifactId>mvvmfx</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+
+        <!-- Guice specific libraries -->
+        <dependency>
+            <groupId>de.saxsys</groupId>
+            <artifactId>mvvmfx-guice</artifactId>
+            <version>1.8.0</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.1.7</version>
         </dependency>
     </dependencies>
 
@@ -47,9 +81,9 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/fxml/*.fxml</include>
+                    <include>**/*.fxml</include>
                     <include>**/img/*.*</include>
-                    <include>**/css/*.*</include>
+                    <include>**/css/*.css</include>
                     <include>**/icon/*.*</include>
                 </includes>
                 <filtering>false</filtering>

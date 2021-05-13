@@ -1,0 +1,21 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<StackPane fx:id="footerViewPane"
+           fx:controller="com.pyjava.daily.view.footer.FooterView"
+           style="-fx-background-color:#F2F2F2"
+           prefHeight="25"
+           xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml">
+    <padding>
+        <Insets left="6" right="20"/>
+    </padding>
+
+    <HBox
+            spacing="10"
+            alignment="CENTER_RIGHT"
+            StackPane.alignment="CENTER_RIGHT">
+        <Label fx:id="textType" wrapText="true"/>
+    </HBox>
+</StackPane>
