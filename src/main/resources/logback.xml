@@ -48,7 +48,7 @@
     </appender>
 
     <root>
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="LOG" />
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOG"/>
     </root>
 </configuration>

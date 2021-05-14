@@ -1,6 +1,8 @@
 package com.pyjava.daily;
 
+import com.pyjava.daily.model.Config;
 import com.pyjava.daily.thread.NoteFxThreadPool;
+import com.pyjava.daily.util.JdbcUtil;
 import com.pyjava.daily.view.main.MainView;
 import com.pyjava.daily.viewmodel.main.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
@@ -10,8 +12,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.prefs.Preferences;
 
 /**
  * <p>描述: [功能描述] </p>
@@ -22,6 +27,8 @@ import java.net.URL;
  */
 public class Starter extends MvvmfxGuiceApplication {
 
+    private static final Logger logger = LoggerFactory.getLogger(Starter.class);
+
     private static Stage main;
 
     public static void main(String[] args) {
@@ -30,7 +37,11 @@ public class Starter extends MvvmfxGuiceApplication {
 
     @Override
     public void startMvvmfx(Stage stage) throws Exception {
-
+        Config.load(getConfig());
+        logger.info(Config.getLastFilePath());
+        if(null != Config.getLastFilePath()){
+            JdbcUtil.getConnection(Config.getLastFilePath()+"\\daily.db");
+        }
         URL iconRes = getClass().getClassLoader().getResource("img/daily.png");
         assert iconRes != null;
 
@@ -56,5 +67,9 @@ public class Starter extends MvvmfxGuiceApplication {
 
     public static Stage getMain() {
         return main;
+    }
+
+    private Preferences getConfig(){
+        return Preferences.userRoot().node("configs");
     }
 }
