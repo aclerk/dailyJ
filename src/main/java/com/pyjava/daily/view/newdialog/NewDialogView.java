@@ -114,9 +114,6 @@ public class NewDialogView implements FxmlView<NewDialogViewModel>, Initializabl
                     }
                 }
             }
-
-
-
         }
     }
 

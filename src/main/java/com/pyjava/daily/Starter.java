@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.prefs.Preferences;
 
@@ -38,9 +39,15 @@ public class Starter extends MvvmfxGuiceApplication {
     @Override
     public void startMvvmfx(Stage stage) throws Exception {
         Config.load(getConfig());
-        logger.info(Config.getLastFilePath());
-        if(null != Config.getLastFilePath()){
-            JdbcUtil.getConnection(Config.getLastFilePath()+"\\daily.db");
+        String lastFilePath = Config.getLastFilePath();
+        logger.debug(lastFilePath);
+        if(null != lastFilePath ){
+            String db = lastFilePath+"\\.daily\\daily.db";
+            if(new File(db).exists()){
+                JdbcUtil.getConnection(Config.getLastFilePath()+"\\daily.db");
+            }
+        }else{
+            Config.setLastFilePath("");
         }
         URL iconRes = getClass().getClassLoader().getResource("img/daily.png");
         assert iconRes != null;
