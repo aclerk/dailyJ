@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * <p>描述: [功能描述] </p>
@@ -44,5 +45,26 @@ public class JdbcUtil {
         }
         logger.info("get connection {}, status: {}", url, connection!=null?"success":"false");
         return connection;
+    }
+
+    public static void initDatabase() throws SQLException {
+        if(connection == null){
+            logger.error("connection is null");
+            return;
+        }
+        connection.setAutoCommit(false);
+        Statement stmt = connection.createStatement();
+        boolean execute = stmt.execute("create table `daily_option`\n" +
+                "(\n" +
+                "    `option_id` bigint primary key not null ,\n" +
+                "    `option_name` varchar(256) not null ,\n" +
+                "    `option_desc` varchar(256),\n" +
+                "    `param_name` varchar(256) not null ,\n" +
+                "    `param_desc` varchar(256),\n" +
+                "    `value` varchar(256),\n" +
+                "    `value_desc` varchar(256),\n" +
+                "    `create_date` datetime\n" +
+                ")");
+        logger.info("创建表option{}",execute);
     }
 }

@@ -1,5 +1,8 @@
 package com.pyjava.daily.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.prefs.Preferences;
 
 /**
@@ -10,6 +13,7 @@ import java.util.prefs.Preferences;
  * @date 2021/5/14 11:31
  */
 public class Config {
+    private static final Logger logger = LoggerFactory.getLogger(Config.class);
 
     public static void load(Preferences options) {
         lastFilePathProperty().init(options,"lastFilePath",null);
@@ -26,6 +30,7 @@ public class Config {
         return LAST_FILE_PATH;
     }
     public static void setLastFilePath(String lastFilePath) {
+        logger.debug("set last file path:{}", lastFilePath);
         Config.LAST_FILE_PATH.set(lastFilePath);
     }
 }
