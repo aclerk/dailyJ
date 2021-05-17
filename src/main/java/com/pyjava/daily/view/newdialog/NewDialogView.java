@@ -83,6 +83,7 @@ public class NewDialogView implements FxmlView<NewDialogViewModel>, Initializabl
                         Config.setLastFilePath(this.dailyLocation.getText());
                         this.dailyName.setText("");
                         this.dailyLocation.setText("");
+                        notificationCenter.publish("split-change");
                         notificationCenter.publish("newDialog-submit");
                     } else if (result.get() == ButtonType.CANCEL) {
                         logger.debug("file exists : click cancel");

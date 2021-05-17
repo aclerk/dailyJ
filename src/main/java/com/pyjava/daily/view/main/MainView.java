@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,9 +46,12 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         splitPane.getStyleClass().add("main-split");
-
+        rightTab.setCenter(new Text("hello, this is daily"));
+        // 还没有选择工作空间的时候,把分割符放到最左边展示项目文件介绍
+        // TODO "固定分割符"
+        splitPane.setDividerPositions(0);
         // 监听窗口宽度改变
-        rootBorderPane.widthProperty().addListener((observableValue, number, t1) -> splitPane.setDividerPosition(0, 0.2));
+        rootBorderPane.widthProperty().addListener((observableValue, number, t1) -> splitPane.setDividerPosition(0, 0));
 
         // 监听窗口关闭
         notificationCenter.subscribe("exit", (key, payload) -> {
@@ -55,6 +59,11 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
             Starter.getMain().close();
         });
 
+        notificationCenter.subscribe("split-change", (key, payload) -> {
+            logger.debug("key={},payload={}", key, payload);
+            splitPane.setDividerPosition(0, 0.2);
+            rootBorderPane.widthProperty().addListener((observableValue, number, t1) -> splitPane.setDividerPosition(0, 0.2));
+        });
 
     }
 
