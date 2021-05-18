@@ -11,11 +11,14 @@
     </stylesheets>
     <BorderPane id="BorderPane" fx:id="rootBorderPane">
         <top>
-            <fx:include source="../menu/MenuView.fxml" BorderPane.alignment="TOP_LEFT"/>
+            <VBox BorderPane.alignment="TOP_LEFT">
+                <fx:include source="../menu/MenuView.fxml"/>
+                <fx:include source="../header/HeaderView.fxml"/>
+            </VBox>
         </top>
         <center>
             <SplitPane fx:id="splitPane" BorderPane.alignment="CENTER">
-                <TabPane fx:id="leftTabPane" prefWidth="-Infinity" prefHeight="-Infinity">
+                <TabPane fx:id="leftTabPane" tabMinHeight="15" tabMaxHeight="15">
                 </TabPane>
                 <BorderPane fx:id="main">
                 </BorderPane>

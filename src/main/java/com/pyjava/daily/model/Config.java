@@ -1,8 +1,10 @@
 package com.pyjava.daily.model;
 
+import com.pyjava.daily.util.JdbcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.prefs.Preferences;
 
 /**
@@ -15,8 +17,17 @@ import java.util.prefs.Preferences;
 public class Config {
     private static final Logger logger = LoggerFactory.getLogger(Config.class);
 
-    public static void load(Preferences options) {
+    public static void load(Preferences options) throws Exception {
         lastFilePathProperty().init(options,"lastFilePath",null);
+        String lastFilePath = Config.getLastFilePath();
+        if(null != lastFilePath ){
+            String db = lastFilePath+"\\.daily\\daily.db";
+            if(new File(db).exists()){
+                JdbcUtil.getConnection(db);
+            }
+        }else{
+            Config.setLastFilePath("");
+        }
     }
 
     /**

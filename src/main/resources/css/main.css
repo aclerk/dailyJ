@@ -6,7 +6,6 @@
 .main-split .tab-pane {
     -mwfx-tab-background: derive(-fx-background,25%);
     -mwfx-tab-active: #787878;
-
     -fx-tab-max-width: 10em;
 }
 

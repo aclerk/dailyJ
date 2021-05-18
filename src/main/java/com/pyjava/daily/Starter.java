@@ -2,7 +2,6 @@ package com.pyjava.daily;
 
 import com.pyjava.daily.model.Config;
 import com.pyjava.daily.thread.NoteFxThreadPool;
-import com.pyjava.daily.util.JdbcUtil;
 import com.pyjava.daily.view.main.MainView;
 import com.pyjava.daily.viewmodel.main.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
@@ -15,7 +14,6 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.prefs.Preferences;
 
@@ -38,17 +36,8 @@ public class Starter extends MvvmfxGuiceApplication {
 
     @Override
     public void startMvvmfx(Stage stage) throws Exception {
-        Config.load(getConfig());
-        String lastFilePath = Config.getLastFilePath();
-        logger.debug(lastFilePath);
-        if(null != lastFilePath ){
-            String db = lastFilePath+"\\.daily\\daily.db";
-            if(new File(db).exists()){
-                JdbcUtil.getConnection(Config.getLastFilePath()+"\\daily.db");
-            }
-        }else{
-            Config.setLastFilePath("");
-        }
+        load();
+
         URL iconRes = getClass().getClassLoader().getResource("img/daily.png");
         assert iconRes != null;
 
@@ -76,7 +65,7 @@ public class Starter extends MvvmfxGuiceApplication {
         return main;
     }
 
-    private Preferences getConfig(){
-        return Preferences.userRoot().node("configs");
+    private void load() throws Exception {
+        Config.load(Preferences.userRoot().node("configs"));
     }
 }
