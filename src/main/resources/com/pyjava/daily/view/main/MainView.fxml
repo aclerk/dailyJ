@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 <StackPane fx:controller="com.pyjava.daily.view.main.MainView"
@@ -18,7 +17,16 @@
         </top>
         <center>
             <SplitPane fx:id="splitPane" BorderPane.alignment="CENTER">
-                <TabPane fx:id="leftTabPane" tabMinHeight="15" tabMaxHeight="15">
+                <TabPane fx:id="leftTabPane" prefWidth="200" tabMinHeight="15" tabMaxHeight="15" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+                    <Tab fx:id="noteTab" text="笔记">
+                        <TreeView fx:id="fileTree">
+
+                        </TreeView>
+                    </Tab>
+                    <Tab fx:id="planTab" text="计划">
+                    </Tab>
+                    <Tab fx:id="bookKeepingTab" text="记账">
+                    </Tab>
                 </TabPane>
                 <BorderPane fx:id="main">
                 </BorderPane>

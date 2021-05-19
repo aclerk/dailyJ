@@ -1,6 +1,6 @@
 package com.pyjava.daily.view.newdialog;
 
-import com.pyjava.daily.model.Config;
+import com.pyjava.daily.config.Config;
 import com.pyjava.daily.viewmodel.newdialog.NewDialogViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;

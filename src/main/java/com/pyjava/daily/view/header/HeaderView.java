@@ -1,6 +1,6 @@
 package com.pyjava.daily.view.header;
 
-import com.pyjava.daily.model.Config;
+import com.pyjava.daily.config.Config;
 import com.pyjava.daily.viewmodel.header.HeaderViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import javafx.fxml.FXML;

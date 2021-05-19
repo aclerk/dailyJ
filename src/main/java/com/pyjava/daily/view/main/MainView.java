@@ -1,17 +1,19 @@
 package com.pyjava.daily.view.main;
 
 import com.pyjava.daily.Starter;
-import com.pyjava.daily.model.Config;
+import com.pyjava.daily.config.Config;
+import com.pyjava.daily.model.FileTreeNode;
+import com.pyjava.daily.thread.FileMonitor;
 import com.pyjava.daily.viewmodel.main.MainViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Side;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -42,15 +45,24 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     public BorderPane main;
     @FXML
     public SplitPane splitPane;
+    @FXML
+    public Tab noteTab;
+    @FXML
+    public Tab planTab;
+    @FXML
+    public Tab bookKeepingTab;
+    @FXML
+    public TreeView<FileTreeNode> fileTree;
 
     @InjectViewModel
-    private MainViewModel viewModel;
+    private MainViewModel mainViewModel;
 
     @Inject
     private NotificationCenter notificationCenter;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        FileMonitor.setMainViewModel(mainViewModel);
         splitPane.getStyleClass().add("main-split");
         main.setCenter(new Text("hello, this is daily"));
         String lastFilePath = Config.getLastFilePath();
@@ -60,6 +72,9 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
             splitPane.setDisable(false);
             splitPane.setDividerPosition(0, 0.2);
             rootBorderPane.widthProperty().addListener((observableValue, number, t1) -> splitPane.setDividerPosition(0, 0.2));
+            mainViewModel.setTreeView(fileTree);
+            mainViewModel.setDir(new File(lastFilePath));
+            mainViewModel.update();
         }else{
             // 还没有打开过,
             // 还没有选择工作空间的时候,把分割符放到最左边展示项目文件介绍
@@ -68,23 +83,6 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
             splitPane.setDisable(true);
             rootBorderPane.widthProperty().addListener((observableValue, number, t1) -> splitPane.setDividerPosition(0, 0));
         }
-
-        // 左侧系统tab窗口
-        Tab tabFile = new Tab();
-        tabFile.setText("文件");
-
-        Tab tabNote = new Tab();
-        tabNote.setText("笔记");
-
-        Tab tabPlan = new Tab();
-        tabPlan.setText("计划");
-
-        Tab tabAccount = new Tab();
-        tabAccount.setText("记账");
-        leftTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        leftTabPane.getTabs().addAll(tabFile, tabNote, tabPlan, tabAccount);
-        leftTabPane.setPrefWidth(200);
-        leftTabPane.setSide(Side.LEFT);
 
         // 监听窗口关闭
         notificationCenter.subscribe("exit", (key, payload) -> {

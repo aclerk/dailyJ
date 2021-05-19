@@ -1,8 +1,8 @@
 package com.pyjava.daily.view.menu;
 
 import com.pyjava.daily.Starter;
+import com.pyjava.daily.config.Config;
 import com.pyjava.daily.constants.Resource;
-import com.pyjava.daily.model.Config;
 import com.pyjava.daily.view.newdialog.NewDialogView;
 import com.pyjava.daily.viewmodel.menu.MenuViewModel;
 import com.pyjava.daily.viewmodel.newdialog.NewDialogViewModel;

@@ -1,4 +1,4 @@
-package com.pyjava.daily.model;
+package com.pyjava.daily.config;
 
 import com.pyjava.daily.util.PreferenceUtil;
 import javafx.beans.property.SimpleStringProperty;

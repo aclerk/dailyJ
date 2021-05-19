@@ -1,6 +1,6 @@
 package com.pyjava.daily;
 
-import com.pyjava.daily.model.Config;
+import com.pyjava.daily.config.Config;
 import com.pyjava.daily.thread.NoteFxThreadPool;
 import com.pyjava.daily.view.main.MainView;
 import com.pyjava.daily.viewmodel.main.MainViewModel;

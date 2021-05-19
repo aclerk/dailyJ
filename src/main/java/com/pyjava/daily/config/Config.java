@@ -1,4 +1,4 @@
-package com.pyjava.daily.model;
+package com.pyjava.daily.config;
 
 import com.pyjava.daily.util.JdbcUtil;
 import org.slf4j.Logger;
