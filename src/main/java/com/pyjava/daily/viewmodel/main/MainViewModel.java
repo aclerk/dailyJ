@@ -1,5 +1,6 @@
 package com.pyjava.daily.viewmodel.main;
 
+import com.pyjava.daily.config.Config;
 import com.pyjava.daily.model.FileTreeNode;
 import com.pyjava.daily.thread.FileMonitor;
 import de.saxsys.mvvmfx.ViewModel;
@@ -8,6 +9,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.io.File;
@@ -15,8 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.pyjava.daily.constants.Resource.FILE_ICON;
-import static com.pyjava.daily.constants.Resource.FOLDER_ICON;
+import static com.pyjava.daily.constants.Resource.*;
 
 /**
  * <p>描述: 主视图vm </p>
@@ -27,7 +29,7 @@ import static com.pyjava.daily.constants.Resource.FOLDER_ICON;
  */
 @Singleton
 public class MainViewModel implements ViewModel {
-
+    private static final Logger logger = LoggerFactory.getLogger(MainViewModel.class);
     private FileTreeNode fileTreeNode;
     private TreeView<FileTreeNode> treeView;
     private File dir;
@@ -43,10 +45,6 @@ public class MainViewModel implements ViewModel {
     public void update() {
         fileTreeNode = new FileTreeNode(dir.getName());
         fileTreeNode.setFile(dir);
-        ImageView iv = new ImageView(FOLDER_ICON);
-        iv.setSmooth(true);
-        iv.setViewport(new Rectangle2D(0, 0, 16, 16));
-        TreeItem<FileTreeNode> rootTree = new TreeItem<>(fileTreeNode, iv);
 
         // 获取新文件树
         FileTreeNode changedFileTreeNode = new FileTreeNode(dir.getName());
@@ -58,10 +56,15 @@ public class MainViewModel implements ViewModel {
         diffTwoTree(fileTreeNode, changedFileTreeNode);
         fileTreeNode = changedFileTreeNode;
 
+        ImageView iv = new ImageView(NOTE_ICON);
+        iv.setSmooth(true);
+        iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+        TreeItem<FileTreeNode> rootTree = new TreeItem<>(fileTreeNode, iv);
+
         buildTree(fileTreeNode, rootTree);
         Platform.runLater(() -> {
             treeView.setRoot(rootTree);
-            rootTree.setExpanded(true);
+            rootTree.setExpanded(fileTreeNode.getExpanded());
         });
         FileMonitor.get().stopWatch();
 
@@ -120,10 +123,10 @@ public class MainViewModel implements ViewModel {
 
     /**
      * <p>
-     *     对比旧文件树和触发更新后的文件树,将新文件树的节点更新到旧文件树上
+     * 对比旧文件树和触发更新后的文件树,将新文件树的节点更新到旧文件树上
      * </p>
      *
-     * @param fileTreeNode :  {@link FileTreeNode} 旧文件树
+     * @param fileTreeNode        :  {@link FileTreeNode} 旧文件树
      * @param changedFileTreeNode : {@link FileTreeNode} 旧文件树
      * @author zhaojj11
      * @date 2021/5/8 0:53
@@ -154,11 +157,11 @@ public class MainViewModel implements ViewModel {
 
     /**
      * <p>
-     *     根据{@link FileTreeNode} 构建 {@link TreeItem}
+     * 根据{@link FileTreeNode} 构建 {@link TreeItem}
      * </p>
      *
      * @param fileTreeNode : 文件树节点
-     * @param rootItem : TreeItem
+     * @param rootItem     : TreeItem
      * @author zhaojj11
      * @date 2021/5/8 0:54
      * @since 1.0
@@ -172,19 +175,49 @@ public class MainViewModel implements ViewModel {
             File fi = fti.getFile();
             TreeItem<FileTreeNode> item = new TreeItem<>(fti);
             if (fi.isDirectory()) {
-                ImageView iv = new ImageView(FOLDER_ICON);
+
+                item.setExpanded(fti.getExpanded());
+                ImageView iv;
+                if(fti.getExpanded()){
+                    iv = new ImageView(FOLDER_OPEN_ICON);
+                }else{
+                    iv = new ImageView(FOLDER_ICON);
+                }
                 iv.setSmooth(true);
                 iv.setViewport(new Rectangle2D(0, 0, 16, 16));
                 item.setGraphic(iv);
-                item.setExpanded(fti.getExpanded());
+
                 rootItem.getChildren().add(item);
                 buildTree(fti, item);
             } else {
-                item.setGraphic(new ImageView(FILE_ICON));
+                String absolutePath = fi.getAbsolutePath();
+                String db = Config.getLastFilePath() + ".daily\\daily.db";
+                logger.debug("absolutePath:{},db:{}", absolutePath, db);
+                if (absolutePath.equals(db)) {
+                    item.setGraphic(new ImageView(SQLITE_ICON));
+                } else {
+                    item.setGraphic(new ImageView(FILE_ICON));
+                }
                 rootItem.getChildren().add(item);
             }
             item.addEventHandler(TreeItem.branchExpandedEvent(),
-                    objectTreeModificationEvent -> fti.setExpanded(objectTreeModificationEvent.wasExpanded()));
+                    objectTreeModificationEvent -> {
+                        logger.debug("{} branch expanded clicked:{}",item.getValue().getName(),objectTreeModificationEvent.wasExpanded());
+                        fti.setExpanded(true);
+                        ImageView iv = new ImageView(FOLDER_OPEN_ICON);
+                        iv.setSmooth(true);
+                        iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+                        item.setGraphic(iv);
+                    });
+            item.addEventHandler(TreeItem.branchCollapsedEvent(),
+                    objectTreeModificationEvent ->{
+                        logger.debug("{} branch collapsed clicked:{}",item.getValue().getName(),objectTreeModificationEvent.wasExpanded());
+                        fti.setExpanded(false);
+                        ImageView iv = new ImageView(FOLDER_ICON);
+                        iv.setSmooth(true);
+                        iv.setViewport(new Rectangle2D(0, 0, 16, 16));
+                        item.setGraphic(iv);
+                    });
         };
         children.stream().filter(f -> !f.getFile().isHidden() && f.getFile().isDirectory()).sorted().forEach(consumer);
         children.stream().filter(f -> !f.getFile().isHidden() && f.getFile().isFile()).sorted().forEach(consumer);

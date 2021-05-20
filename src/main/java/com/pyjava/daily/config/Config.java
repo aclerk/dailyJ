@@ -21,9 +21,11 @@ public class Config {
         lastFilePathProperty().init(options,"lastFilePath",null);
         String lastFilePath = Config.getLastFilePath();
         if(null != lastFilePath ){
-            String db = lastFilePath+"\\.daily\\daily.db";
-            if(new File(db).exists()){
-                JdbcUtil.getConnection(db);
+            String dbParentPath = lastFilePath+"\\.daily\\";
+            String dbPath = dbParentPath + "daily.db";
+
+            if(new File(dbParentPath).exists()){
+                JdbcUtil.getConnection(dbPath);
             }
         }else{
             Config.setLastFilePath("");
