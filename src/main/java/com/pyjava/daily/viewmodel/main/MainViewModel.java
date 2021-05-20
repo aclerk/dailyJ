@@ -64,7 +64,7 @@ public class MainViewModel implements ViewModel {
         buildTree(fileTreeNode, rootTree);
         Platform.runLater(() -> {
             treeView.setRoot(rootTree);
-            rootTree.setExpanded(fileTreeNode.getExpanded());
+            rootTree.setExpanded(true);
         });
         FileMonitor.get().stopWatch();
 

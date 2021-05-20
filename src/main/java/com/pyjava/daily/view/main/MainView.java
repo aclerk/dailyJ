@@ -10,10 +10,7 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -66,7 +64,7 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
         splitPane.getStyleClass().add("main-split");
         main.setCenter(new Text("hello, this is daily"));
         String lastFilePath = Config.getLastFilePath();
-        if(StringUtils.isNotEmpty(lastFilePath)){
+        if (StringUtils.isNotEmpty(lastFilePath)) {
             // 说明曾经打开过,直接打开
             leftTabPane.setMinWidth(50);
             splitPane.setDisable(false);
@@ -75,15 +73,79 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
             mainViewModel.setTreeView(fileTree);
             mainViewModel.setDir(new File(lastFilePath));
             mainViewModel.update();
-        }else{
+        } else {
             // 还没有打开过,
             // 还没有选择工作空间的时候,把分割符放到最左边展示项目文件介绍
-            splitPane.setDividerPosition(0,0);
-            splitPane.setDividerPosition(1,1);
+            splitPane.setDividerPosition(0, 0);
+            splitPane.setDividerPosition(1, 1);
             splitPane.setDisable(true);
             rootBorderPane.widthProperty().addListener((observableValue, number, t1) -> splitPane.setDividerPosition(0, 0));
         }
 
+        // 文件树添加右击菜单
+        ContextMenu menu = new ContextMenu();
+        Menu addMenu = new Menu("新建");
+        MenuItem addFolder = new MenuItem("新建文件夹");
+        addFolder.setOnAction(e -> {
+            TreeItem<FileTreeNode> selectItem = fileTree.getSelectionModel().getSelectedItem();
+            logger.debug("在{}新建文件夹", selectItem.getValue().getName());
+            FileTreeNode node = selectItem.getValue();
+            TextInputDialog dialog = new TextInputDialog("");
+            dialog.setTitle("Text Input Dialog");
+            dialog.setContentText("Please enter folder name:");
+            Optional<String> s = dialog.showAndWait();
+            if (s.isPresent()) {
+                String absolutePath = node.getFile().getAbsolutePath();
+                String dirPath = absolutePath + "\\" + s.get();
+                logger.debug("dir path:{}", dirPath);
+                File file = new File(dirPath);
+                if (!file.exists()) {
+                    boolean mkdir = file.mkdir();
+                }
+            }
+        });
+        MenuItem addFile = new MenuItem("新建文件");
+        addFile.setOnAction(e -> {
+            TreeItem<FileTreeNode> selectItem = fileTree.getSelectionModel().getSelectedItem();
+            logger.debug("在{}新建文件", selectItem.getValue().getName());
+        });
+        addMenu.getItems().addAll(addFolder, addFile);
+        MenuItem deleteItem = new MenuItem("删除");
+        deleteItem.setOnAction(e -> {
+            TreeItem<FileTreeNode> selectItem = fileTree.getSelectionModel().getSelectedItem();
+            FileTreeNode node = selectItem.getValue();
+            logger.debug("在{}删除文件", selectItem.getValue().getName());
+            String dbParentPath = lastFilePath + ".daily\\";
+            String dbPath = dbParentPath + "daily.db";
+            String workspace = node.getFile().getAbsolutePath();
+            if (node.getFile().isDirectory()) {
+                workspace += "\\";
+            }
+            boolean flag = lastFilePath.equals(workspace)
+                    || dbParentPath.equals(workspace)
+                    || dbPath.equals(workspace);
+            if (flag) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Cannot delete .daily/daily.db");
+                alert.setContentText("the folder .daily or file daily.db cannot be deleted");
+                alert.getButtonTypes().add(new ButtonType("OK"));
+                alert.showAndWait();
+            } else {
+                File file = selectItem.getValue().getFile();
+                if (file.exists()) {
+                    boolean delete = file.delete();
+                }
+            }
+        });
+        MenuItem renameItem = new MenuItem("重命名");
+        renameItem.setOnAction(e -> {
+            TreeItem<FileTreeNode> selectItem = fileTree.getSelectionModel().getSelectedItem();
+            logger.debug("在{}重命名文件/文件夹", selectItem.getValue().getName());
+        });
+        menu.getItems().add(addMenu);
+        menu.getItems().add(deleteItem);
+        menu.getItems().add(renameItem);
+        fileTree.setContextMenu(menu);
         // 监听窗口关闭
         notificationCenter.subscribe("exit", (key, payload) -> {
             logger.debug("key={},payload={}", key, payload);
