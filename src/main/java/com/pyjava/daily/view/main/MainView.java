@@ -4,6 +4,7 @@ import com.pyjava.daily.Starter;
 import com.pyjava.daily.config.Config;
 import com.pyjava.daily.model.FileTreeNode;
 import com.pyjava.daily.thread.FileMonitor;
+import com.pyjava.daily.util.FileUtil;
 import com.pyjava.daily.viewmodel.main.MainViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -107,14 +109,32 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
         MenuItem addFile = new MenuItem("新建文件");
         addFile.setOnAction(e -> {
             TreeItem<FileTreeNode> selectItem = fileTree.getSelectionModel().getSelectedItem();
+            FileTreeNode node = selectItem.getValue();
             logger.debug("在{}新建文件", selectItem.getValue().getName());
+            TextInputDialog dialog = new TextInputDialog("");
+            dialog.setTitle("Text Input Dialog");
+            dialog.setContentText("Please enter file name:");
+            Optional<String> s = dialog.showAndWait();
+            if (s.isPresent()) {
+                String absolutePath = node.getFile().getAbsolutePath();
+                String dirPath = absolutePath + "\\" + s.get();
+                logger.debug("dir path:{}", dirPath);
+                File file = new File(dirPath);
+                if (!file.exists()) {
+                    try {
+                        boolean newFile = file.createNewFile();
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                }
+            }
         });
         addMenu.getItems().addAll(addFolder, addFile);
         MenuItem deleteItem = new MenuItem("删除");
         deleteItem.setOnAction(e -> {
             TreeItem<FileTreeNode> selectItem = fileTree.getSelectionModel().getSelectedItem();
             FileTreeNode node = selectItem.getValue();
-            logger.debug("在{}删除文件", selectItem.getValue().getName());
+            logger.debug("在{}删除文件", node.getName());
             String dbParentPath = lastFilePath + ".daily\\";
             String dbPath = dbParentPath + "daily.db";
             String workspace = node.getFile().getAbsolutePath();
@@ -131,16 +151,30 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
                 alert.getButtonTypes().add(new ButtonType("OK"));
                 alert.showAndWait();
             } else {
-                File file = selectItem.getValue().getFile();
-                if (file.exists()) {
-                    boolean delete = file.delete();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("delete file");
+                alert.setContentText("delete the file?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.isPresent()){
+                    if (result.get() == ButtonType.OK){
+                        File file = selectItem.getValue().getFile();
+                        FileUtil.deleteFile(file);
+                        // 不知道这里为什么需要更新一下
+                        mainViewModel.update();
+                    }
                 }
             }
         });
         MenuItem renameItem = new MenuItem("重命名");
         renameItem.setOnAction(e -> {
             TreeItem<FileTreeNode> selectItem = fileTree.getSelectionModel().getSelectedItem();
-            logger.debug("在{}重命名文件/文件夹", selectItem.getValue().getName());
+            FileTreeNode node = selectItem.getValue();
+            logger.debug("在{}重命名文件/文件夹", node.getName());
+            TextInputDialog dialog = new TextInputDialog("");
+            dialog.setTitle("rename Dialog");
+            dialog.setContentText("Please enter file name:");
+            Optional<String> s = dialog.showAndWait();
+            s.ifPresent(value -> FileUtil.rename(node.getFile(), value));
         });
         menu.getItems().add(addMenu);
         menu.getItems().add(deleteItem);

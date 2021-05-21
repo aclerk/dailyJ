@@ -58,6 +58,7 @@ public class Starter extends MvvmfxGuiceApplication {
     @Override
     public void stopMvvmfx() {
         NoteFxThreadPool.getThreadPool().shutdownNow();
+        NoteFxThreadPool.getFileMonitorPool().shutdownNow();
         main = null;
     }
 
