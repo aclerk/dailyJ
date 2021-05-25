@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Text;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +52,8 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     public Tab bookKeepingTab;
     @FXML
     public TreeView<FileTreeNode> fileTree;
+    @FXML
+    public TabPane contentTab;
 
     @InjectViewModel
     private MainViewModel mainViewModel;
@@ -64,7 +65,6 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         FileMonitor.setMainViewModel(mainViewModel);
         splitPane.getStyleClass().add("main-split");
-        main.setCenter(new Text("hello, this is daily"));
         String lastFilePath = Config.getLastFilePath();
         if (StringUtils.isNotEmpty(lastFilePath)) {
             // 说明曾经打开过,直接打开
@@ -180,6 +180,18 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
         menu.getItems().add(deleteItem);
         menu.getItems().add(renameItem);
         fileTree.setContextMenu(menu);
+
+
+        // fileTree点击事件
+        fileTree.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            logger.debug("{}", newValue.getValue().getName());
+            FileTreeNode value = newValue.getValue();
+            Tab tab = new Tab(value.getName());
+            TextArea textArea = new TextArea();
+            tab.setContent(textArea);
+            contentTab.getTabs().add(tab);
+        });
+
         // 监听窗口关闭
         notificationCenter.subscribe("exit", (key, payload) -> {
             logger.debug("key={},payload={}", key, payload);

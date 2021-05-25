@@ -29,6 +29,11 @@
                     </Tab>
                 </TabPane>
                 <BorderPane fx:id="main">
+                    <center>
+                        <TabPane fx:id="contentTab" prefWidth="200">
+
+                        </TabPane>
+                    </center>
                 </BorderPane>
             </SplitPane>
         </center>

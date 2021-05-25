@@ -33,24 +33,6 @@ public class Config {
     }
 
     /**
-     * 当前打开位置属性
-     */
-    private static final ConfigStringProperty NOW_FILE_PATH =new ConfigStringProperty();
-
-    public static String getNowFilePath() {
-        return NOW_FILE_PATH.get();
-    }
-
-    public static ConfigStringProperty nowFilePathProperty() {
-        return NOW_FILE_PATH;
-    }
-
-    public static void setNowFilePath(String nowFilePath) {
-        logger.debug("set now file path:{}", nowFilePath);
-        Config.NOW_FILE_PATH.set(nowFilePath);
-    }
-
-    /**
      * 上一次文件打开位置属性
      */
     private static final ConfigStringProperty LAST_FILE_PATH =new ConfigStringProperty();
