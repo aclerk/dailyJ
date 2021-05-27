@@ -17,7 +17,6 @@ public class Resource {
     public final static Image FOLDER_OPEN_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/folder-open-16.png")));
     public final static Image FILE_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/file-16.png")));
     public final static Image MAIN_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/daily.ico")));
-    public final static Image SQLITE_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/sqlite-16.png")));
     public final static Image NOTE_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/sticky-note-16.png")));
 
 }

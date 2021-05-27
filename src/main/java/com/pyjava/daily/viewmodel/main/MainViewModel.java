@@ -1,6 +1,5 @@
 package com.pyjava.daily.viewmodel.main;
 
-import com.pyjava.daily.config.Config;
 import com.pyjava.daily.model.FileTreeNode;
 import com.pyjava.daily.thread.FileMonitor;
 import de.saxsys.mvvmfx.ViewModel;
@@ -107,6 +106,10 @@ public class MainViewModel implements ViewModel {
             }
 
             for (File fi : files) {
+                // 跳过配置文件夹
+                if(".daily".equals(fi.getName())){
+                    continue;
+                }
                 FileTreeNode fti = new FileTreeNode(fi.getName());
                 fti.setExpanded(false);
                 fti.setFile(fi);
@@ -190,14 +193,8 @@ public class MainViewModel implements ViewModel {
                 rootItem.getChildren().add(item);
                 buildTree(fti, item);
             } else {
-                String absolutePath = fi.getAbsolutePath();
-                String db = Config.getLastFilePath() + ".daily\\daily.db";
-                logger.debug("absolutePath:{},db:{}", absolutePath, db);
-                if (absolutePath.equals(db)) {
-                    item.setGraphic(new ImageView(SQLITE_ICON));
-                } else {
-                    item.setGraphic(new ImageView(FILE_ICON));
-                }
+                item.setGraphic(new ImageView(FILE_ICON));
+
                 rootItem.getChildren().add(item);
             }
             item.addEventHandler(TreeItem.branchExpandedEvent(),

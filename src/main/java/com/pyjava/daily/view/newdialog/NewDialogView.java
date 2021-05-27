@@ -1,6 +1,7 @@
 package com.pyjava.daily.view.newdialog;
 
 import com.pyjava.daily.config.Config;
+import com.pyjava.daily.util.FileUtil;
 import com.pyjava.daily.viewmodel.newdialog.NewDialogViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -51,7 +53,7 @@ public class NewDialogView implements FxmlView<NewDialogViewModel>, Initializabl
         this.dailyLocation.setText(dir.getAbsolutePath());
     }
 
-    public void submit() {
+    public void submit() throws IOException {
         if ("".equals(this.dailyLocation.getText()) || "".equals(this.dailyName.getText())) {
             Alert alert = new Alert(Alert.AlertType.NONE);
             alert.setTitle("Cannot save settings");
@@ -74,12 +76,7 @@ public class NewDialogView implements FxmlView<NewDialogViewModel>, Initializabl
                 if (result.isPresent()) {
                     if (result.get() == ButtonType.OK) {
                         logger.debug("file exists : click ok");
-                        String dailyFilePath = file.getAbsolutePath()+ "\\.daily\\";
-                        File dailyFile = new File(dailyFilePath);
-                        if (!dailyFile.exists()) {
-                            boolean mkdirs = dailyFile.mkdirs();
-                            // TODO 创建项目文件
-                        }
+                        FileUtil.initWorkSpace(file.getAbsolutePath());
                         Config.setLastFilePath(this.dailyLocation.getText());
                         this.dailyName.setText("");
                         this.dailyLocation.setText("");

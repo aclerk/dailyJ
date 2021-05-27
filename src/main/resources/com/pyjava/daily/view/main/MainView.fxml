@@ -18,14 +18,12 @@
         <center>
             <SplitPane fx:id="splitPane" BorderPane.alignment="CENTER">
                 <TabPane fx:id="leftTabPane" prefWidth="200" tabMinHeight="15" tabMaxHeight="15" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+                    <Tab fx:id="inbox" text="inbox">
+                    </Tab>
                     <Tab fx:id="noteTab" text="笔记">
                         <TreeView fx:id="fileTree">
 
                         </TreeView>
-                    </Tab>
-                    <Tab fx:id="planTab" text="计划">
-                    </Tab>
-                    <Tab fx:id="bookKeepingTab" text="记账">
                     </Tab>
                 </TabPane>
                 <BorderPane fx:id="main">

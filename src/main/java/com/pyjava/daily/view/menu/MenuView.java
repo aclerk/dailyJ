@@ -58,9 +58,6 @@ public class MenuView implements FxmlView<MenuViewModel>, Initializable {
 
             // 判断文件是否存在
             String lastFilePath = Config.getLastFilePath();
-
-
-
         });
         notificationCenter.subscribe("newDialog-cancel", (key, payload) -> {
             logger.debug("key={},payload={}", key, payload);

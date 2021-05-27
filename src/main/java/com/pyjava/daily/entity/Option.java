@@ -1,4 +1,4 @@
-package com.pyjava.daily.model;
+package com.pyjava.daily.entity;
 
 
 /**

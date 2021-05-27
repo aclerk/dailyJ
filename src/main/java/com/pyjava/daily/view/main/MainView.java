@@ -47,13 +47,11 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     @FXML
     public Tab noteTab;
     @FXML
-    public Tab planTab;
-    @FXML
-    public Tab bookKeepingTab;
-    @FXML
     public TreeView<FileTreeNode> fileTree;
     @FXML
     public TabPane contentTab;
+    @FXML
+    public Tab inbox;
 
     @InjectViewModel
     private MainViewModel mainViewModel;
