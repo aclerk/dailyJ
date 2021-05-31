@@ -1,5 +1,6 @@
 package com.pyjava.daily.constants;
 
+
 import java.io.File;
 
 /**
@@ -10,13 +11,28 @@ import java.io.File;
  * @date 2021/5/10 23:49
  */
 public class Constants {
-    public static final String FILE_SPLIT = File.separator;
-    public static final String DAILY = ".daily";
-    public static final String INFO_FILE_NAME = "info.json";
-    public static final String NOTE_PATH = "note";
-    public static final String NOTE_INFO_FILE_NAME = "note.json";
-
-    public static final String NOTE_FOLDER_PATH = DAILY + FILE_SPLIT + NOTE_PATH;
-    public static final String INFO_RELATIVE_PATH = DAILY + FILE_SPLIT + INFO_FILE_NAME;
-    public static final String NOTE_RELATIVE_PATH = DAILY + FILE_SPLIT + NOTE_PATH + FILE_SPLIT + NOTE_INFO_FILE_NAME;
+    /**
+     * 文件分割
+     */
+    public static final String FILE_SEPARATOR = File.separator;
+    /**
+     * 用户目录地址
+     */
+    public static final String USER_HOME = System.getProperty("user.home");
+    /**
+     * 全局变量目录名称
+     */
+    public static final String GLOBAL_CONFIG_FOLDER_NAME = ".daily";
+    /**
+     * 全局变量目录绝对路径
+     */
+    public static final String GLOBAL_CONFIG_FOLDER_PATH = USER_HOME + FILE_SEPARATOR + ".daily";
+    /**
+     * 全局变量文件名称
+     */
+    public static final String GLOBAL_CONFIG_FILE_NAME = "daily-config.json";
+    /**
+     * 全局变量文件绝对路径
+     */
+    public static final String GLOBAL_CONFIG_FILE_PATH = GLOBAL_CONFIG_FOLDER_PATH + FILE_SEPARATOR + "daily-config.json";
 }

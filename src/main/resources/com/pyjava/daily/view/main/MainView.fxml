@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import java.net.URL?>
+<?import javafx.scene.layout.StackPane?>
 <StackPane fx:controller="com.pyjava.daily.view.main.MainView"
            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml">
-    <stylesheets>
-        <URL value="@/css/main.css"/>
-    </stylesheets>
-    <BorderPane id="BorderPane" fx:id="rootBorderPane">
-        <top>
-            <VBox BorderPane.alignment="TOP_LEFT">
-                <fx:include source="../menu/MenuView.fxml"/>
-                <fx:include source="../header/HeaderView.fxml"/>
-            </VBox>
-        </top>
-        <center>
-            <SplitPane fx:id="splitPane" BorderPane.alignment="CENTER">
-                <TabPane fx:id="leftTabPane" prefWidth="200" tabMinHeight="15" tabMaxHeight="15" side="LEFT" tabClosingPolicy="UNAVAILABLE">
-                    <Tab fx:id="inbox" text="inbox">
-                    </Tab>
-                    <Tab fx:id="noteTab" text="笔记">
-                        <TreeView fx:id="fileTree">
+<!--    <stylesheets>-->
+<!--        <URL value="@/css/main.css"/>-->
+<!--    </stylesheets>-->
+<!--    <BorderPane id="BorderPane" fx:id="rootBorderPane">-->
+<!--        <top>-->
+<!--            <VBox BorderPane.alignment="TOP_LEFT">-->
+<!--                <fx:include source="../menu/MenuView.fxml"/>-->
+<!--                <fx:include source="../header/HeaderView.fxml"/>-->
+<!--            </VBox>-->
+<!--        </top>-->
+<!--        <center>-->
+<!--            <SplitPane fx:id="splitPane" BorderPane.alignment="CENTER">-->
+<!--                <TabPane fx:id="leftTabPane" prefWidth="200" tabMinHeight="15" tabMaxHeight="15" side="LEFT" tabClosingPolicy="UNAVAILABLE">-->
+<!--                    <Tab fx:id="inbox" text="inbox">-->
+<!--                    </Tab>-->
+<!--                    <Tab fx:id="noteTab" text="笔记">-->
+<!--                        <TreeView fx:id="fileTree">-->
 
-                        </TreeView>
-                    </Tab>
-                </TabPane>
-                <BorderPane fx:id="main">
-                    <center>
-                        <TabPane fx:id="contentTab" prefWidth="200">
+<!--                        </TreeView>-->
+<!--                    </Tab>-->
+<!--                </TabPane>-->
+<!--                <BorderPane fx:id="main">-->
+<!--                    <center>-->
+<!--                        <TabPane fx:id="contentTab" prefWidth="200">-->
 
-                        </TabPane>
-                    </center>
-                </BorderPane>
-            </SplitPane>
-        </center>
-        <bottom>
-            <fx:include source="../footer/FooterView.fxml"/>
-        </bottom>
-    </BorderPane>
+<!--                        </TabPane>-->
+<!--                    </center>-->
+<!--                </BorderPane>-->
+<!--            </SplitPane>-->
+<!--        </center>-->
+<!--        <bottom>-->
+<!--            <fx:include source="../footer/FooterView.fxml"/>-->
+<!--        </bottom>-->
+<!--    </BorderPane>-->
 </StackPane>

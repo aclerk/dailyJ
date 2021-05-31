@@ -1,7 +1,13 @@
 package com.pyjava.daily;
 
-import com.pyjava.daily.config.Config;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.pyjava.daily.config.DailyModule;
+import com.pyjava.daily.config.GlobalConfig;
+import com.pyjava.daily.constants.Constants;
 import com.pyjava.daily.thread.NoteFxThreadPool;
+import com.pyjava.daily.util.InjectorUtils;
 import com.pyjava.daily.view.main.MainView;
 import com.pyjava.daily.viewmodel.main.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
@@ -14,8 +20,9 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.*;
 import java.net.URL;
-import java.util.prefs.Preferences;
+import java.nio.charset.StandardCharsets;
 
 /**
  * <p>描述: [功能描述] </p>
@@ -25,6 +32,8 @@ import java.util.prefs.Preferences;
  * @date 2021/5/12 21:27
  */
 public class Starter extends MvvmfxGuiceApplication {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private static final Logger logger = LoggerFactory.getLogger(Starter.class);
 
@@ -62,11 +71,41 @@ public class Starter extends MvvmfxGuiceApplication {
         main = null;
     }
 
-    public static Stage getMain() {
-        return main;
+    private void load() throws IOException {
+        // 全局配置文件创建
+        File globalConfigFolder = new File(Constants.GLOBAL_CONFIG_FOLDER_PATH);
+        if (!globalConfigFolder.exists()) {
+            boolean mkdir = globalConfigFolder.mkdir();
+        }
+        Injector injector = Guice.createInjector(new DailyModule());
+        InjectorUtils.setInjector(injector);
+        GlobalConfig instance = injector.getInstance(GlobalConfig.class);
+        File globalConfigFile = new File(Constants.GLOBAL_CONFIG_FILE_PATH);
+        if (!globalConfigFile.exists()) {
+            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(globalConfigFile), StandardCharsets.UTF_8);
+            osw.write(OBJECT_MAPPER.writeValueAsString(instance));
+            //清空缓冲区，强制输出数据
+            osw.flush();
+            //关闭输出流
+            osw.close();
+        } else {
+            // 如果已经存在了该文件则直接读取
+            FileReader fileReader = new FileReader(globalConfigFile);
+            Reader reader = new InputStreamReader(new FileInputStream(globalConfigFile), StandardCharsets.UTF_8);
+            int ch;
+            StringBuilder sb = new StringBuilder();
+            while ((ch = reader.read()) != -1) {
+                sb.append((char) ch);
+            }
+            fileReader.close();
+            reader.close();
+            String globalConfigStr = sb.toString();
+            GlobalConfig globalConfig = OBJECT_MAPPER.readValue(globalConfigStr, GlobalConfig.class);
+            instance.setGlobalConfig(globalConfig);
+        }
     }
 
-    private void load() throws Exception {
-        Config.load(Preferences.userRoot().node("configs"));
+    public static Stage getMain() {
+        return main;
     }
 }

@@ -1,7 +1,6 @@
 package com.pyjava.daily.view.menu;
 
 import com.pyjava.daily.Starter;
-import com.pyjava.daily.config.Config;
 import com.pyjava.daily.constants.Resource;
 import com.pyjava.daily.view.newdialog.NewDialogView;
 import com.pyjava.daily.viewmodel.menu.MenuViewModel;
@@ -50,21 +49,21 @@ public class MenuView implements FxmlView<MenuViewModel>, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        notificationCenter.subscribe("newDialog-submit", (key, payload) -> {
-            logger.debug("key={},payload={}", key, payload);
-            stage.close();
-            stage = null;
-            scene = null;
-
-            // 判断文件是否存在
-            String lastFilePath = Config.getLastFilePath();
-        });
-        notificationCenter.subscribe("newDialog-cancel", (key, payload) -> {
-            logger.debug("key={},payload={}", key, payload);
-            stage.close();
-            stage = null;
-            scene = null;
-        });
+//        notificationCenter.subscribe("newDialog-submit", (key, payload) -> {
+//            logger.debug("key={},payload={}", key, payload);
+//            stage.close();
+//            stage = null;
+//            scene = null;
+//
+//            // 判断文件是否存在
+//            String lastFilePath = Config.getLastFilePath();
+//        });
+//        notificationCenter.subscribe("newDialog-cancel", (key, payload) -> {
+//            logger.debug("key={},payload={}", key, payload);
+//            stage.close();
+//            stage = null;
+//            scene = null;
+//        });
     }
 
     public void createDaily() {
