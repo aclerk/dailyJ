@@ -3,7 +3,7 @@ package com.pyjava.daily.config;
 import com.google.inject.AbstractModule;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>描述: daily module </p>
  *
  * @author zhaojj11
  * @version v1.0

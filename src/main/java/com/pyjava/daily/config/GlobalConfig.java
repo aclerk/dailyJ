@@ -27,12 +27,18 @@ public class GlobalConfig {
      */
     private List<String> dbs;
 
+    /**
+     * empty {@link GlobalConfig}
+     */
     public GlobalConfig() {
         this.lastOpenDb = "";
         this.createTime = new Date();
         this.dbs = new ArrayList<>();
     }
 
+    /**
+     * 根据指定参数创建 {@link GlobalConfig}
+     */
     public void setGlobalConfig(GlobalConfig globalConfig){
         this.lastOpenDb = globalConfig.getLastOpenDb();
         this.createTime = globalConfig.getCreateTime();

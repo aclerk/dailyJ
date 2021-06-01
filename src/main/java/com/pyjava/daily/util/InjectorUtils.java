@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import java.util.Objects;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>描述: injector 工具 </p>
  *
  * @author zhaojj11
  * @version v1.0

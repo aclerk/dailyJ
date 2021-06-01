@@ -1,20 +1,14 @@
 package com.pyjava.daily.util;
 
-import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.jdbc.ScriptRunner;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.DriverManager;
 
 /**
- * <p>描述: [功能描述] </p>
+ * <p>描述: jdbc工具 </p>
  *
  * @author zhaojj11
  * @version v1.0
@@ -22,11 +16,8 @@ import java.sql.SQLException;
  */
 public class JdbcUtil {
     private static final Logger logger = LoggerFactory.getLogger(JdbcUtil.class);
-
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String URL_PREFIX = "jdbc:sqlite:";
-    private static Connection connection = null;
-    private static SqlSessionFactory sqlSessionFactory = null;
 
     static {
         try {
@@ -40,24 +31,15 @@ public class JdbcUtil {
         }
     }
 
-    public static void initConnection(String url) throws Exception {
-        if (connection == null) {
-            try {
-                DataSource dataSource = new UnpooledDataSource("org.sqlite.JDBC", URL_PREFIX + url, "", "");
-                // 初始化
-                Configuration configuration = new Configuration();
-                configuration.setMapUnderscoreToCamelCase(true);
-                sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-                // 初始化数据库
-                connection = dataSource.getConnection();
-                ScriptRunner runner = new ScriptRunner(connection);
-                runner.setErrorLogWriter(null);
-                runner.setLogWriter(null);
-                runner.runScript(Resources.getResourceAsReader("sql/init.sql"));
-            } catch (SQLException throwables) {
-                logger.error("error {} in get connection", throwables.getMessage());
-                throw new Exception(throwables);
-            }
+    /**
+     * 获取连接
+     */
+    private static Connection getConnection(String dbName) {
+        try {
+            return DriverManager.getConnection("jdbc:sqlite:" + dbName);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 }
