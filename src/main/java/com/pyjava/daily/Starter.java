@@ -68,6 +68,7 @@ public class Starter extends MvvmfxGuiceApplication {
     public void stopMvvmfx() {
         NoteFxThreadPool.getThreadPool().shutdownNow();
         main = null;
+        logger.debug("daily exit");
     }
 
     private void load() throws IOException {
