@@ -4,7 +4,6 @@ import com.pyjava.daily.viewmodel.main.MainViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeView;
@@ -28,8 +27,6 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     @FXML
     public BorderPane rootBorderPane;
     @FXML
-    public SplitPane splitPane;
-    @FXML
     public TabPane leftTabPane;
     @FXML
     public Tab inbox;
@@ -37,10 +34,6 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     public Tab noteTab;
     @FXML
     public TreeView<String> fileTree;
-    @FXML
-    public BorderPane main;
-    @FXML
-    public TabPane contentTab;
     @FXML
     public Tab todo;
     @FXML

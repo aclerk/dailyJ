@@ -68,4 +68,13 @@ public class GlobalConfig {
     public void setDbs(List<String> dbs) {
         this.dbs = dbs;
     }
+
+    @Override
+    public String toString() {
+        return "GlobalConfig{" +
+                "lastOpenDb='" + lastOpenDb + '\'' +
+                ", createTime=" + createTime +
+                ", dbs=" + dbs +
+                '}';
+    }
 }

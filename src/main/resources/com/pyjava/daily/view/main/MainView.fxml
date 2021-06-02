@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
 <StackPane fx:controller="com.pyjava.daily.view.main.MainView"
            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml">
@@ -15,28 +17,19 @@
             </VBox>
         </top>
         <center>
-            <SplitPane fx:id="splitPane" BorderPane.alignment="CENTER">
-                <TabPane fx:id="leftTabPane" prefWidth="200" tabMinHeight="15" tabMaxHeight="15" side="LEFT" tabClosingPolicy="UNAVAILABLE">
-                    <Tab fx:id="inbox" text="inbox">
-                    </Tab>
-                    <Tab fx:id="noteTab" text="笔记">
-                        <TreeView fx:id="fileTree">
+            <TabPane fx:id="leftTabPane" prefWidth="200" tabMinHeight="15" tabMaxHeight="15" tabClosingPolicy="UNAVAILABLE">
+                <Tab fx:id="inbox" text="inbox">
+                </Tab>
+                <Tab fx:id="noteTab" text="笔记">
+                    <TreeView fx:id="fileTree">
 
-                        </TreeView>
-                    </Tab>
-                    <Tab fx:id="todo" text="todo">
-                    </Tab>
-                    <Tab fx:id="account" text="account">
-                    </Tab>
-                </TabPane>
-                <BorderPane fx:id="main">
-                    <center>
-                        <TabPane fx:id="contentTab" prefWidth="200">
-
-                        </TabPane>
-                    </center>
-                </BorderPane>
-            </SplitPane>
+                    </TreeView>
+                </Tab>
+                <Tab fx:id="todo" text="todo">
+                </Tab>
+                <Tab fx:id="account" text="account">
+                </Tab>
+            </TabPane>
         </center>
         <bottom>
             <fx:include source="../footer/FooterView.fxml"/>

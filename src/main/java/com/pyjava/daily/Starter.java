@@ -67,7 +67,6 @@ public class Starter extends MvvmfxGuiceApplication {
     @Override
     public void stopMvvmfx() {
         NoteFxThreadPool.getThreadPool().shutdownNow();
-        NoteFxThreadPool.getFileMonitorPool().shutdownNow();
         main = null;
     }
 
@@ -103,6 +102,7 @@ public class Starter extends MvvmfxGuiceApplication {
             GlobalConfig globalConfig = OBJECT_MAPPER.readValue(globalConfigStr, GlobalConfig.class);
             instance.setGlobalConfig(globalConfig);
         }
+        logger.debug(instance.toString());
     }
 
     public static Stage getMain() {
