@@ -33,7 +33,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class Starter extends MvvmfxGuiceApplication {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private static final Logger logger = LoggerFactory.getLogger(Starter.class);
 
@@ -71,6 +71,10 @@ public class Starter extends MvvmfxGuiceApplication {
         logger.debug("daily exit");
     }
 
+    /**
+     * 全局配置文件创建/读取
+     * @throws IOException IO异常
+     */
     private void load() throws IOException {
         // 全局配置文件创建
         File globalConfigFolder = new File(Constants.GLOBAL_CONFIG_FOLDER_PATH);

@@ -16,6 +16,10 @@ public class Constants {
      */
     public static final String FILE_SEPARATOR = File.separator;
     /**
+     * db后缀
+     */
+    public static final String DB_SUFFIX = ".db";
+    /**
      * 用户目录地址
      */
     public static final String USER_HOME = System.getProperty("user.home");
