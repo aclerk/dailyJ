@@ -1,6 +1,6 @@
 create table `option`
 (
-    `option_id`    char(64) primary key not null,
+    `option_id`    char(64) primary key,
     `option_name`  varchar(256)         not null,
     `name_desc`    varchar(256),
     `option_value` varchar(256)         not null,
@@ -10,7 +10,7 @@ create table `option`
 
 create table `note`
 (
-    `note_id`     char(64) primary key not null,
+    `note_id`     char(64) primary key,
     `title`       text,
     `summary`     text,
     `content`     longtext,
@@ -21,9 +21,9 @@ create table `note`
 
 create table `catalog`
 (
-    `catalog_id`  char(64) primary key not null,
+    `catalog_id`  char(64) primary key,
     `parent_id`   char(64) default null,
-    `name`        text     default not null,
+    `name`        text,
     `type`        char(1),
     `create_time` datetime,
     `update_time` datetime
@@ -31,15 +31,15 @@ create table `catalog`
 
 create table `tag`
 (
-    `tag_id`      char(64) primary key not null,
-    `name`        text default not null,
+    `tag_id`      char(64) primary key,
+    `name`        text,
     `create_time` datetime,
     `update_time` datetime
 );
 
 create table `note_tag_relation`
 (
-    `note_tag_id` char(64) primary key not null,
+    `note_tag_id` char(64) primary key,
     `note_id` char(64) not null,
     `tag_id` char(64) not null,
     `create_time` datetime,

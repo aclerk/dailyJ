@@ -6,6 +6,7 @@ import com.pyjava.daily.config.GlobalConfig;
 import com.pyjava.daily.constants.Constants;
 import com.pyjava.daily.constants.Resource;
 import com.pyjava.daily.util.InjectorUtils;
+import com.pyjava.daily.util.JdbcUtil;
 import com.pyjava.daily.view.newdialog.NewDialogView;
 import com.pyjava.daily.viewmodel.menu.MenuViewModel;
 import com.pyjava.daily.viewmodel.newdialog.NewDialogViewModel;
@@ -19,8 +20,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +34,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -68,21 +72,37 @@ public class MenuView implements FxmlView<MenuViewModel>, Initializable {
             // GlobalConfig中加入
             Injector injector = InjectorUtils.getInjector();
             GlobalConfig instance = injector.getInstance(GlobalConfig.class);
-            instance.setLastOpenDb(db);
-            instance.getDbs().add(db);
-            // 入文件
-            try{
-                File globalConfigFile = new File(Constants.GLOBAL_CONFIG_FILE_PATH);
-                OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(globalConfigFile), StandardCharsets.UTF_8);
-                osw.write(Starter.OBJECT_MAPPER.writeValueAsString(instance));
-                //清空缓冲区，强制输出数据
-                osw.flush();
-                //关闭输出流
-                osw.close();
-            }catch (IOException e){
-                e.printStackTrace();
+            List<String> dbs = instance.getDbs();
+            boolean flag = false;
+            if(CollectionUtils.isNotEmpty(dbs)){
+                for (String s : dbs) {
+                    if(s.equals(db)){
+                        flag = true;
+                        break;
+                    }
+                }
             }
-
+            instance.setLastOpenDb(db);
+            if (!flag) {
+                dbs.add(db);
+                // 入文件
+                try{
+                    File globalConfigFile = new File(Constants.GLOBAL_CONFIG_FILE_PATH);
+                    OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(globalConfigFile), StandardCharsets.UTF_8);
+                    osw.write(Starter.OBJECT_MAPPER.writeValueAsString(instance));
+                    //清空缓冲区，强制输出数据
+                    osw.flush();
+                    //关闭输出流
+                    osw.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+                try {
+                    JdbcUtil.initDb(db);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         });
         notificationCenter.subscribe("newDialog-cancel", (key, payload) -> {
             logger.debug("key={},payload={}", key, payload);
@@ -111,6 +131,36 @@ public class MenuView implements FxmlView<MenuViewModel>, Initializable {
     }
 
     public void openDaily() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("选择需要的打开的文件");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("db文件", "*.db")
+        );
+        File file = fileChooser.showOpenDialog(Starter.getMain());
+        if(file != null){
+            Injector injector = InjectorUtils.getInjector();
+            GlobalConfig instance = injector.getInstance(GlobalConfig.class);
+            List<String> dbs = instance.getDbs();
+            String filePath = file.getAbsolutePath();
+
+            boolean flag = false;
+            if(CollectionUtils.isNotEmpty(dbs)){
+                for (String s : dbs) {
+                    if(s.equals(filePath)){
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            if(!flag){
+                // TODO 校验文件正确性
+                // TODO 加入全局变量中
+                logger.debug("todo");
+            }else{
+                instance.setLastOpenDb(filePath);
+                JdbcUtil.getConnection(filePath);
+            }
+        }
     }
 
     public void exit() {

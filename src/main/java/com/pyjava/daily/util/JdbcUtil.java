@@ -4,8 +4,13 @@ package com.pyjava.daily.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.LineNumberReader;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
 
 /**
  * <p>描述: jdbc工具 </p>
@@ -31,15 +36,62 @@ public class JdbcUtil {
         }
     }
 
+    public static void initDb(String dbName) throws Exception {
+        Connection connection = getConnection(dbName);
+        if(connection != null){
+            StringBuffer command = null;
+            URL resource = JdbcUtil.class.getClassLoader().getResource("sql/init.sql");
+            assert resource!=null;
+            String sqlPath = resource.getPath();
+            FileReader fileReader = new FileReader(new File(sqlPath));
+            try{
+                LineNumberReader lineNumberReader = new LineNumberReader(fileReader);
+                String line;
+                while ((line = lineNumberReader.readLine()) != null) {
+                    if (command == null) {
+                        command = new StringBuffer();
+                    }
+                    String trimmedLine = line.trim();
+                    if (!trimmedLine.startsWith("--") && !trimmedLine.startsWith("//")) {
+                        command.append(line);
+                        command.append(" ");
+                    } else if(trimmedLine.endsWith(";")){
+                        command.append(line, 0, line
+                                .lastIndexOf(";"));
+                        command.append(" ");
+                        Statement statement = connection.createStatement();
+                        statement.execute(command.toString());
+                        command = null;
+                        try {
+                            statement.close();
+                        } catch (Exception e) {
+                            // Ignore to workaround a bug in Jakarta DBCP
+                        }
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                throw new Exception();
+            }
+        }
+    }
+
     /**
      * 获取连接
+     * @param dbName 数据库文件路径
+     * @return 连接 {@link Connection}
      */
-    private static Connection getConnection(String dbName) {
+    public static Connection getConnection(String dbName) {
+        logger.debug("db name is " + dbName);
         try {
-            return DriverManager.getConnection("jdbc:sqlite:" + dbName);
+            return DriverManager.getConnection(URL_PREFIX + dbName);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void main(String[] args) throws Exception {
+        initDb("C:\\Users\\dell\\Desktop\\test.db");
     }
 }
