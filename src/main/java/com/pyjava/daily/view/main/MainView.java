@@ -38,9 +38,9 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     @FXML
     public TreeView<String> fileTree;
     @FXML
-    public Tab todo;
-    @FXML
     public Tab account;
+    @FXML
+    public Tab plan;
     @Inject
     private NotificationCenter notificationCenter;
     @Override
