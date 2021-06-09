@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +34,6 @@ public class MainView implements FxmlView<MainViewModel>, Initializable {
     public Tab inbox;
     @FXML
     public Tab noteTab;
-    @FXML
-    public TreeView<String> fileTree;
     @FXML
     public Tab account;
     @FXML

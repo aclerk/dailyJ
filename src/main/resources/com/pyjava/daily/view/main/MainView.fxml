@@ -21,9 +21,7 @@
                 <Tab fx:id="inbox" text="inbox">
                 </Tab>
                 <Tab fx:id="noteTab" text="笔记">
-                    <TreeView fx:id="fileTree">
-
-                    </TreeView>
+                    <fx:include source="../note/note.fxml"/>
                 </Tab>
                 <Tab fx:id="plan" text="plan">
                 </Tab>
