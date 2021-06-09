@@ -6,10 +6,10 @@ daily是一个个人提高的应用程序,专注于记录个人的知识库,日�
 
 ## ✅ Todo List
 
+[daily-v1](https://github.com/dailyJ/daily/projects/2)
 
-- [ ] [plan-1.0.0](./doc/plan-1.0.0.md)
-    - [ ] 知识库note
-        - [ ] markdown
-        - [ ] 双链
-    - [ ] 日程安排plan
-    - [ ] 账本account
+- [ ] 知识库note
+- [ ] 日程安排plan
+- [ ] 账本account
+- [ ] 可插拔组件化功能
+- [ ] 支持webdav/github存储
