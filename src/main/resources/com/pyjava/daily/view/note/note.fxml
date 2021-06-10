@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane fx:id="notePane"
            fx:controller="com.pyjava.daily.view.note.NoteView"
            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml">
     <SplitPane fx:id="splitPane">
-        <TreeView fx:id="leftTree">
+        <StackPane>
+            <TreeView fx:id="leftTree">
 
-        </TreeView>
-        <TabPane fx:id="rightPane">
+            </TreeView>
+        </StackPane>
+        <StackPane fx:id="areaPane">
+            <ListView>
 
-        </TabPane>
+            </ListView>
+        </StackPane>
+        <StackPane>
+            <TextArea editable="false">
+
+            </TextArea>
+        </StackPane>
+
+
+
     </SplitPane>
 </StackPane>

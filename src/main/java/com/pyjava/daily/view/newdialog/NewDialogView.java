@@ -2,7 +2,7 @@ package com.pyjava.daily.view.newdialog;
 
 import com.pyjava.daily.constants.Constants;
 import com.pyjava.daily.view.menu.MenuView;
-import com.pyjava.daily.viewmodel.newdialog.NewDialogViewModel;
+import com.pyjava.daily.viewmodel.NewDialogViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.fxml.FXML;

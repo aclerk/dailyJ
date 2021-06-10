@@ -8,8 +8,9 @@ import com.pyjava.daily.config.GlobalConfig;
 import com.pyjava.daily.constants.Constants;
 import com.pyjava.daily.thread.NoteFxThreadPool;
 import com.pyjava.daily.util.InjectorUtils;
+import com.pyjava.daily.util.JdbcUtil;
 import com.pyjava.daily.view.main.MainView;
-import com.pyjava.daily.viewmodel.main.MainViewModel;
+import com.pyjava.daily.viewmodel.MainViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
@@ -17,6 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +110,10 @@ public class Starter extends MvvmfxGuiceApplication {
             instance.setGlobalConfig(globalConfig);
         }
         logger.debug(instance.toString());
+        // 初始化datasource
+        if(StringUtils.isNotEmpty(instance.getLastOpenDb())){
+            JdbcUtil.init(instance.getLastOpenDb());
+        }
     }
 
     public static Stage getMain() {

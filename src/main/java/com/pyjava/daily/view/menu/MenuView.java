@@ -8,8 +8,8 @@ import com.pyjava.daily.constants.Resource;
 import com.pyjava.daily.util.InjectorUtils;
 import com.pyjava.daily.util.JdbcUtil;
 import com.pyjava.daily.view.newdialog.NewDialogView;
-import com.pyjava.daily.viewmodel.menu.MenuViewModel;
-import com.pyjava.daily.viewmodel.newdialog.NewDialogViewModel;
+import com.pyjava.daily.viewmodel.MenuViewModel;
+import com.pyjava.daily.viewmodel.NewDialogViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
@@ -98,7 +98,9 @@ public class MenuView implements FxmlView<MenuViewModel>, Initializable {
                     e.printStackTrace();
                 }
                 try {
-                    JdbcUtil.initDb(db);
+                    logger.debug("edit");
+                    // TODO 逻辑修改
+                    JdbcUtil.initDb();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -158,7 +160,7 @@ public class MenuView implements FxmlView<MenuViewModel>, Initializable {
                 logger.debug("todo");
             }else{
                 instance.setLastOpenDb(filePath);
-                JdbcUtil.getConnection(filePath);
+                JdbcUtil.init(filePath);
             }
         }
     }

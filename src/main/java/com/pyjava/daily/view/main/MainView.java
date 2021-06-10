@@ -1,7 +1,7 @@
 package com.pyjava.daily.view.main;
 
 import com.pyjava.daily.Starter;
-import com.pyjava.daily.viewmodel.main.MainViewModel;
+import com.pyjava.daily.viewmodel.MainViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.fxml.FXML;

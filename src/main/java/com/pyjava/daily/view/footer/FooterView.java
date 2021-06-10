@@ -1,6 +1,6 @@
 package com.pyjava.daily.view.footer;
 
-import com.pyjava.daily.viewmodel.footer.FooterViewModel;
+import com.pyjava.daily.viewmodel.FooterViewModel;
 import de.saxsys.mvvmfx.FxmlView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

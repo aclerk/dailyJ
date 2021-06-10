@@ -1,4 +1,4 @@
-package com.pyjava.daily.viewmodel.note;
+package com.pyjava.daily.viewmodel;
 
 import de.saxsys.mvvmfx.ViewModel;
 
@@ -7,7 +7,7 @@ import de.saxsys.mvvmfx.ViewModel;
  *
  * @author zhaojj11
  * @version v1.0
- * @date 2021/6/9 22:09
+ * @date 2021/5/14 17:54
  */
-public class NoteViewModel implements ViewModel {
+public class NewDialogViewModel implements ViewModel {
 }

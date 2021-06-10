@@ -1,4 +1,4 @@
-package com.pyjava.daily.viewmodel.menu;
+package com.pyjava.daily.viewmodel;
 
 import de.saxsys.mvvmfx.ViewModel;
 

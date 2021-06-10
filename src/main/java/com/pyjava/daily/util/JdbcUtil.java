@@ -1,15 +1,23 @@
 package com.pyjava.daily.util;
 
 
+import com.pyjava.daily.mapper.NotebookMapper;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.TransactionFactory;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sqlite.SQLiteDataSource;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -23,6 +31,7 @@ public class JdbcUtil {
     private static final Logger logger = LoggerFactory.getLogger(JdbcUtil.class);
     private static final String DRIVER = "org.sqlite.JDBC";
     private static final String URL_PREFIX = "jdbc:sqlite:";
+    private static SQLiteDataSource dataSource;
 
     static {
         try {
@@ -36,8 +45,29 @@ public class JdbcUtil {
         }
     }
 
-    public static void initDb(String dbName) throws Exception {
-        Connection connection = getConnection(dbName);
+    public static void init(String dbName) {
+        logger.debug("初始化 db:{}", dbName);
+        SQLiteDataSource ds = new SQLiteDataSource();
+        ds.setUrl(URL_PREFIX + dbName);
+        dataSource = ds;
+    }
+
+    public static SqlSessionFactory getSqlSessionFactory() {
+        Configuration configuration = new Configuration();
+        configuration.setMapUnderscoreToCamelCase(true);
+        TransactionFactory transactionFactory = new JdbcTransactionFactory();
+        Environment environment = new Environment("default", transactionFactory, dataSource);
+        configuration.setEnvironment(environment);
+        configuration.addMapper(NotebookMapper.class);
+        return new SqlSessionFactoryBuilder().build(configuration);
+    }
+
+    public static SQLiteDataSource getDataSource() {
+        return dataSource;
+    }
+
+    public static void initDb() throws Exception {
+        Connection connection = getConnection();
         if (connection != null) {
             StringBuffer command = null;
             URL resource = JdbcUtil.class.getClassLoader().getResource("sql/init.sql");
@@ -74,6 +104,8 @@ public class JdbcUtil {
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new Exception();
+            } finally {
+                close(connection);
             }
         }
     }
@@ -81,20 +113,23 @@ public class JdbcUtil {
     /**
      * 获取连接
      *
-     * @param dbName 数据库文件路径
      * @return 连接 {@link Connection}
      */
-    public static Connection getConnection(String dbName) {
-        logger.debug("db name is " + dbName);
+    public static Connection getConnection() {
+        Connection connection = null;
         try {
-            return DriverManager.getConnection(URL_PREFIX + dbName);
-        } catch (Exception e) {
-            e.printStackTrace();
+            connection = dataSource.getConnection();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
-        return null;
+        return connection;
     }
 
-    public static void main(String[] args) throws Exception {
-        initDb("C:\\Users\\dell\\Desktop\\test.db");
+    public static void close(Connection connection) {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

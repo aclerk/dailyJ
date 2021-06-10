@@ -1,4 +1,4 @@
-package com.pyjava.daily.viewmodel.footer;
+package com.pyjava.daily.viewmodel;
 
 import de.saxsys.mvvmfx.ViewModel;
 

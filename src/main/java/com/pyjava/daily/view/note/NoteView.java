@@ -1,8 +1,10 @@
 package com.pyjava.daily.view.note;
 
+import com.pyjava.daily.entity.Notebook;
 import com.pyjava.daily.view.newdialog.NewDialogView;
-import com.pyjava.daily.viewmodel.note.NoteViewModel;
+import com.pyjava.daily.viewmodel.NoteViewModel;
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -11,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -30,11 +33,17 @@ public class NoteView implements FxmlView<NoteViewModel>, Initializable {
     public TreeView<String> leftTree;
     @FXML
     public TabPane rightPane;
+    @FXML
+    public StackPane areaPane;
+
+    @InjectViewModel
+    NoteViewModel noteViewModel;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         splitPane.setDividerPosition(0, 0.2);
+        splitPane.setDividerPosition(1, 0.4);
         notePane.widthProperty().addListener((observableValue, number, t1) -> splitPane.setDividerPosition(0, 0.2));
 
         // 目录树中添加菜单那
@@ -46,5 +55,9 @@ public class NoteView implements FxmlView<NoteViewModel>, Initializable {
         menu.getItems().add(deleteItem);
         menu.getItems().add(renameItem);
         leftTree.setContextMenu(menu);
+        List<Notebook> notebooks = noteViewModel.list();
+        TreeItem<String> items = noteViewModel.buildTree(notebooks);
+        leftTree.setRoot(items);
+        leftTree.setShowRoot(false);
     }
 }
