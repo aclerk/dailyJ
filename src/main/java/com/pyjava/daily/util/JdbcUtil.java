@@ -38,13 +38,14 @@ public class JdbcUtil {
 
     public static void initDb(String dbName) throws Exception {
         Connection connection = getConnection(dbName);
-        if(connection != null){
+        if (connection != null) {
             StringBuffer command = null;
             URL resource = JdbcUtil.class.getClassLoader().getResource("sql/init.sql");
-            assert resource!=null;
+            assert resource != null;
             String sqlPath = resource.getPath();
+            logger.debug(sqlPath);
             FileReader fileReader = new FileReader(new File(sqlPath));
-            try{
+            try {
                 LineNumberReader lineNumberReader = new LineNumberReader(fileReader);
                 String line;
                 while ((line = lineNumberReader.readLine()) != null) {
@@ -52,24 +53,25 @@ public class JdbcUtil {
                         command = new StringBuffer();
                     }
                     String trimmedLine = line.trim();
-                    if (!trimmedLine.startsWith("--") && !trimmedLine.startsWith("//")) {
-                        command.append(line);
-                        command.append(" ");
-                    } else if(trimmedLine.endsWith(";")){
-                        command.append(line, 0, line
-                                .lastIndexOf(";"));
-                        command.append(" ");
+                    if (trimmedLine.endsWith(";")) {
+                        command.append(line, 0, line.lastIndexOf(";"));
+                        command.append(" \n");
                         Statement statement = connection.createStatement();
-                        statement.execute(command.toString());
+                        String cmd = command.toString();
+                        logger.debug(cmd);
+                        statement.execute(cmd);
                         command = null;
                         try {
                             statement.close();
                         } catch (Exception e) {
-                            // Ignore to workaround a bug in Jakarta DBCP
+                            // ignore
                         }
+                    } else if (!trimmedLine.startsWith("--") && !trimmedLine.startsWith("//")) {
+                        command.append(line);
+                        command.append(" \n");
                     }
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 throw new Exception();
             }
@@ -78,6 +80,7 @@ public class JdbcUtil {
 
     /**
      * 获取连接
+     *
      * @param dbName 数据库文件路径
      * @return 连接 {@link Connection}
      */
