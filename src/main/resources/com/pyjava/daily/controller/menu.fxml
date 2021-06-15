@@ -2,7 +2,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane fx:id="menuViewPane"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.pyjava.daily.view.menu.MenuView">
+            fx:controller="com.pyjava.daily.controller.MenuController">
     <top>
         <MenuBar>
             <Menu text="File">

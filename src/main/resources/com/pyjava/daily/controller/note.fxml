@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane fx:id="notePane"
-           fx:controller="com.pyjava.daily.view.note.NoteView"
+           fx:controller="com.pyjava.daily.controller.NoteController"
            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml">
     <SplitPane fx:id="splitPane">
         <StackPane>

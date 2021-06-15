@@ -1,9 +1,9 @@
-package com.pyjava.daily.viewmodel;
+package com.pyjava.daily.service;
 
+import com.google.inject.Singleton;
 import com.pyjava.daily.entity.Notebook;
 import com.pyjava.daily.mapper.NotebookMapper;
 import com.pyjava.daily.util.JdbcUtil;
-import de.saxsys.mvvmfx.ViewModel;
 import javafx.scene.control.TreeItem;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -20,8 +20,10 @@ import java.util.List;
  * @version v1.0
  * @date 2021/6/9 22:09
  */
-public class NoteViewModel implements ViewModel {
+@Singleton
+public class NoteServiceImpl implements NoteService {
 
+    @Override
     public List<Notebook> list() {
         List<Notebook> query;
         // 1、获取sqlSessionFactory对象
@@ -36,6 +38,7 @@ public class NoteViewModel implements ViewModel {
         return query;
     }
 
+    @Override
     public TreeItem<String> buildTree(List<Notebook> notebookList){
         List<Notebook> notebookTree = getNotebookTree(notebookList);
         if (CollectionUtils.isEmpty(notebookTree)) {

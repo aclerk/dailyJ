@@ -1,10 +1,10 @@
-package com.pyjava.daily.view.note;
+package com.pyjava.daily.controller;
 
+import com.google.inject.Injector;
 import com.pyjava.daily.entity.Notebook;
-import com.pyjava.daily.view.newdialog.NewDialogView;
-import com.pyjava.daily.viewmodel.NoteViewModel;
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectViewModel;
+import com.pyjava.daily.service.NoteService;
+import com.pyjava.daily.service.NoteServiceImpl;
+import com.pyjava.daily.util.InjectorUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -23,8 +23,8 @@ import java.util.ResourceBundle;
  * @version v1.0
  * @date 2021/6/9 22:07
  */
-public class NoteView implements FxmlView<NoteViewModel>, Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(NewDialogView.class);
+public class NoteController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(NoteController.class);
     @FXML
     public StackPane notePane;
     @FXML
@@ -32,13 +32,7 @@ public class NoteView implements FxmlView<NoteViewModel>, Initializable {
     @FXML
     public TreeView<String> leftTree;
     @FXML
-    public TabPane rightPane;
-    @FXML
     public StackPane areaPane;
-
-    @InjectViewModel
-    NoteViewModel noteViewModel;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -55,8 +49,10 @@ public class NoteView implements FxmlView<NoteViewModel>, Initializable {
         menu.getItems().add(deleteItem);
         menu.getItems().add(renameItem);
         leftTree.setContextMenu(menu);
-        List<Notebook> notebooks = noteViewModel.list();
-        TreeItem<String> items = noteViewModel.buildTree(notebooks);
+        Injector injector = InjectorUtils.getInjector();
+        NoteService noteService = injector.getInstance(NoteServiceImpl.class);
+        List<Notebook> notebooks = noteService.list();
+        TreeItem<String> items = noteService.buildTree(notebooks);
         leftTree.setRoot(items);
         leftTree.setShowRoot(false);
     }

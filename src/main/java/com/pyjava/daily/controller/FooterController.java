@@ -1,7 +1,5 @@
-package com.pyjava.daily.view.footer;
+package com.pyjava.daily.controller;
 
-import com.pyjava.daily.viewmodel.FooterViewModel;
-import de.saxsys.mvvmfx.FxmlView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -17,7 +15,7 @@ import java.util.ResourceBundle;
  * @version v1.0
  * @date 2021/5/12 23:46
  */
-public class FooterView implements FxmlView<FooterViewModel>, Initializable {
+public class FooterController implements Initializable {
     @FXML
     public StackPane footerViewPane;
     @FXML

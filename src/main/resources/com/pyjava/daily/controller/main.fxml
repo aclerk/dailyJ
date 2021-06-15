@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
-<StackPane fx:controller="com.pyjava.daily.view.main.MainView"
+<StackPane fx:controller="com.pyjava.daily.controller.MainController"
            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml">
     <stylesheets>
         <URL value="@/css/main.css"/>
@@ -14,18 +14,18 @@
     <BorderPane id="BorderPane" fx:id="rootBorderPane">
         <top>
             <VBox BorderPane.alignment="TOP_LEFT">
-                <fx:include source="../menu/MenuView.fxml"/>
+                <fx:include source="menu.fxml"/>
             </VBox>
         </top>
         <center>
             <TabPane fx:id="leftTabPane" prefWidth="200" tabMinHeight="15" tabMaxHeight="15" tabClosingPolicy="UNAVAILABLE">
                 <Tab fx:id="noteTab" text="笔记">
-                    <fx:include source="../note/note.fxml"/>
+                    <fx:include source="note.fxml"/>
                 </Tab>
             </TabPane>
         </center>
         <bottom>
-            <fx:include source="../footer/FooterView.fxml"/>
+            <fx:include source="footer.fxml"/>
         </bottom>
     </BorderPane>
 </StackPane>

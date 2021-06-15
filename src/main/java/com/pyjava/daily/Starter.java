@@ -9,11 +9,8 @@ import com.pyjava.daily.constants.Constants;
 import com.pyjava.daily.thread.NoteFxThreadPool;
 import com.pyjava.daily.util.InjectorUtils;
 import com.pyjava.daily.util.JdbcUtil;
-import com.pyjava.daily.view.main.MainView;
-import com.pyjava.daily.viewmodel.MainViewModel;
-import de.saxsys.mvvmfx.FluentViewLoader;
-import de.saxsys.mvvmfx.ViewTuple;
-import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -33,7 +30,7 @@ import java.nio.charset.StandardCharsets;
  * @version v1.0
  * @date 2021/5/12 21:27
  */
-public class Starter extends MvvmfxGuiceApplication {
+public class Starter extends Application {
 
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -46,31 +43,29 @@ public class Starter extends MvvmfxGuiceApplication {
     }
 
     @Override
-    public void startMvvmfx(Stage stage) throws Exception {
+    public void start(Stage primaryStage) throws Exception {
         load();
+        main = primaryStage;
 
         URL iconRes = getClass().getClassLoader().getResource("img/daily.png");
         assert iconRes != null;
+        URL resource = getClass().getClassLoader().getResource("com/pyjava/daily/controller/main.fxml");
+        assert resource != null;
 
-        final ViewTuple<MainView, MainViewModel> tuple
-                = FluentViewLoader.fxmlView(MainView.class).load();
+        Parent root = FXMLLoader.load(resource);
+        Scene scene = new Scene(root, 1000, 618);
 
-        // Locate View for loaded FXML file
-        final Parent view = tuple.getView();
-
-        final Scene scene = new Scene(view, 1000, 618);
-        stage.setTitle("daily");
-        stage.getIcons().add(new Image(iconRes.toURI().toString()));
-        stage.setScene(scene);
-        main = stage;
-        stage.show();
+        primaryStage.setTitle("daily");
+        primaryStage.getIcons().add(new Image(iconRes.toURI().toString()));
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     @Override
-    public void stopMvvmfx() {
+    public void stop() {
+        logger.debug("daily shutdown now");
         NoteFxThreadPool.getThreadPool().shutdownNow();
         main = null;
-        logger.debug("daily exit");
     }
 
     /**

@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane fx:id="footerViewPane"
-           fx:controller="com.pyjava.daily.view.footer.FooterView"
+           fx:controller="com.pyjava.daily.controller.FooterController"
            style="-fx-background-color:#F2F2F2"
            prefHeight="25"
            xmlns="http://javafx.com/javafx/8"
