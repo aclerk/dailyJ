@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -18,14 +19,8 @@
         </top>
         <center>
             <TabPane fx:id="leftTabPane" prefWidth="200" tabMinHeight="15" tabMaxHeight="15" tabClosingPolicy="UNAVAILABLE">
-                <Tab fx:id="inbox" text="inbox">
-                </Tab>
                 <Tab fx:id="noteTab" text="笔记">
                     <fx:include source="../note/note.fxml"/>
-                </Tab>
-                <Tab fx:id="plan" text="plan">
-                </Tab>
-                <Tab fx:id="account" text="account">
                 </Tab>
             </TabPane>
         </center>
