@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.pyjava.daily.notification.DefaultNotificationCenter;
 import com.pyjava.daily.notification.NotificationCenter;
 import com.pyjava.daily.service.NoteService;
-import com.pyjava.daily.service.NoteServiceImpl;
+import com.pyjava.daily.service.impl.NoteServiceImpl;
 
 /**
  * <p>描述: daily module </p>

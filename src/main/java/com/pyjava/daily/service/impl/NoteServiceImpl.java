@@ -1,8 +1,9 @@
-package com.pyjava.daily.service;
+package com.pyjava.daily.service.impl;
 
 import com.google.inject.Singleton;
 import com.pyjava.daily.entity.Notebook;
 import com.pyjava.daily.mapper.NotebookMapper;
+import com.pyjava.daily.service.NoteService;
 import com.pyjava.daily.util.JdbcUtil;
 import javafx.scene.control.TreeItem;
 import org.apache.commons.collections4.CollectionUtils;

@@ -46,7 +46,7 @@ public class JdbcUtil {
     }
 
     public static void init(String dbName) {
-        logger.debug("初始化 db:{}", dbName);
+        logger.debug("initializing db:{}", dbName);
         SQLiteDataSource ds = new SQLiteDataSource();
         ds.setUrl(URL_PREFIX + dbName);
         dataSource = ds;
@@ -66,8 +66,11 @@ public class JdbcUtil {
         return dataSource;
     }
 
-    public static void initDb() throws Exception {
-        Connection connection = getConnection();
+    public static void initDb(String dbName) throws Exception {
+        logger.debug("initializing db:{}", dbName);
+        SQLiteDataSource ds = new SQLiteDataSource();
+        ds.setUrl(URL_PREFIX + dbName);
+        Connection connection = ds.getConnection();
         if (connection != null) {
             StringBuffer command = null;
             URL resource = JdbcUtil.class.getClassLoader().getResource("sql/init.sql");
