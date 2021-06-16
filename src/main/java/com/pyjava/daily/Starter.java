@@ -44,6 +44,8 @@ public class Starter extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Injector injector = Guice.createInjector(new DailyModule());
+        InjectorUtils.setInjector(injector);
         load();
         main = primaryStage;
 
@@ -52,8 +54,17 @@ public class Starter extends Application {
         URL resource = getClass().getClassLoader().getResource("com/pyjava/daily/controller/main.fxml");
         assert resource != null;
 
-        Parent root = FXMLLoader.load(resource);
-        Scene scene = new Scene(root, 1000, 618);
+        FXMLLoader loader = new FXMLLoader();
+        loader.setControllerFactory(injector::getInstance);
+        loader.setLocation(resource);
+        Scene scene;
+        try {
+            Parent root = loader.load();
+            scene = new Scene(root, 1000, 618);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
 
         primaryStage.setTitle("daily");
         primaryStage.getIcons().add(new Image(iconRes.toURI().toString()));
@@ -70,6 +81,7 @@ public class Starter extends Application {
 
     /**
      * 全局配置文件创建/读取
+     *
      * @throws IOException IO异常
      */
     private void load() throws IOException {
@@ -78,8 +90,8 @@ public class Starter extends Application {
         if (!globalConfigFolder.exists()) {
             boolean mkdir = globalConfigFolder.mkdir();
         }
-        Injector injector = Guice.createInjector(new DailyModule());
-        InjectorUtils.setInjector(injector);
+        Injector injector = InjectorUtils.getInjector();
+
         GlobalConfig instance = injector.getInstance(GlobalConfig.class);
         File globalConfigFile = new File(Constants.GLOBAL_CONFIG_FILE_PATH);
         if (!globalConfigFile.exists()) {
@@ -106,7 +118,7 @@ public class Starter extends Application {
         }
         logger.debug(instance.toString());
         // 初始化datasource
-        if(StringUtils.isNotEmpty(instance.getLastOpenDb())){
+        if (StringUtils.isNotEmpty(instance.getLastOpenDb())) {
             JdbcUtil.init(instance.getLastOpenDb());
         }
     }

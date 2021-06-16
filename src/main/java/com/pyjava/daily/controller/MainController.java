@@ -1,5 +1,8 @@
 package com.pyjava.daily.controller;
 
+import com.google.inject.Inject;
+import com.pyjava.daily.Starter;
+import com.pyjava.daily.notification.NotificationCenter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
@@ -27,8 +30,14 @@ public class MainController implements Initializable {
     public TabPane leftTabPane;
     @FXML
     public Tab noteTab;
+    @Inject
+    private NotificationCenter notificationCenter;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        notificationCenter.subscribe("exit", (key, payload) -> {
+            logger.debug("key={},payload={}", key, payload);
+            Starter.getMain().close();
+        });
     }
 
 }

@@ -1,10 +1,9 @@
 package com.pyjava.daily.controller;
 
-import com.google.inject.Injector;
+import com.google.inject.Inject;
 import com.pyjava.daily.entity.Notebook;
+import com.pyjava.daily.notification.NotificationCenter;
 import com.pyjava.daily.service.NoteService;
-import com.pyjava.daily.service.NoteServiceImpl;
-import com.pyjava.daily.util.InjectorUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -34,6 +33,12 @@ public class NoteController implements Initializable {
     @FXML
     public StackPane areaPane;
 
+    @Inject
+    private NotificationCenter notificationCenter;
+
+    @Inject
+    private NoteService noteService;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         splitPane.setDividerPosition(0, 0.2);
@@ -49,8 +54,6 @@ public class NoteController implements Initializable {
         menu.getItems().add(deleteItem);
         menu.getItems().add(renameItem);
         leftTree.setContextMenu(menu);
-        Injector injector = InjectorUtils.getInjector();
-        NoteService noteService = injector.getInstance(NoteServiceImpl.class);
         List<Notebook> notebooks = noteService.list();
         TreeItem<String> items = noteService.buildTree(notebooks);
         leftTree.setRoot(items);

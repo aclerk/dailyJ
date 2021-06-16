@@ -1,12 +1,10 @@
 package com.pyjava.daily.controller;
 
-import com.pyjava.daily.Starter;
-import javafx.application.Platform;
+import com.google.inject.Inject;
+import com.pyjava.daily.notification.NotificationCenter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +25,8 @@ public class MenuController implements Initializable {
     @FXML
     private BorderPane menuViewPane;
 
-    public static Stage stage = null;
-    public static Scene scene = null;
+    @Inject
+    private NotificationCenter notificationCenter;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -44,7 +42,6 @@ public class MenuController implements Initializable {
     }
 
     public void exit() {
-        Starter.getMain().close();
-        Platform.exit();
+        notificationCenter.publish("exit");
     }
 }
