@@ -19,4 +19,18 @@ public interface NotebookMapper {
      * @return notebook数组
      */
     List<Notebook> list();
+
+    /**
+     * 保存笔记本信息
+     * @param notebook 笔记本实体
+     * @return 影响行数
+     */
+    int save(Notebook notebook);
+
+    /**
+     * 根据id删除笔记本
+     * @param notebookId 笔记本id
+     * @return 影响行数
+     */
+    int deleteById(String notebookId);
 }

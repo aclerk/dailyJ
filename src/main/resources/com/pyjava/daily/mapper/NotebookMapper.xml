@@ -7,4 +7,14 @@
         select *
         from notebook
     </select>
+
+    <insert id="save" parameterType="com.pyjava.daily.entity.Notebook">
+        insert into notebook(`notebook_id`,`parent_id`, `name`, `create_time`, `update_time`)
+        values (#{notebookId}, #{parentId}, #{name}, #{createTime}, #{updateTime})
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from notebook
+        where notebook_id = #{notebookId}
+    </delete>
 </mapper>

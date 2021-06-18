@@ -6,6 +6,7 @@ import com.pyjava.daily.mapper.NotebookMapper;
 import com.pyjava.daily.service.NoteService;
 import com.pyjava.daily.util.JdbcUtil;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.SqlSession;
@@ -13,6 +14,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pyjava.daily.constants.Resource.BOOK_ICON;
 
 /**
  * <p>描述: [功能描述] </p>
@@ -40,14 +43,55 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public TreeItem<String> buildTree(List<Notebook> notebookList){
+    public Boolean save(Notebook notebook) {
+        int num = 0;
+        // 1、获取sqlSessionFactory对象
+        SqlSessionFactory sqlSessionFactory = JdbcUtil.getSqlSessionFactory();
+        // 2、获取sqlSession对象
+        try (SqlSession openSession = sqlSessionFactory.openSession()) {
+            // 3、获取接口的实现类对象
+            //会为接口自动的创建一个代理对象，代理对象去执行增删改查方法
+            NotebookMapper mapper = openSession.getMapper(NotebookMapper.class);
+            num = mapper.save(notebook);
+            openSession.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return num==1;
+    }
+
+    @Override
+    public Boolean deleteById(String notebookId) {
+        int num = 0;
+        // 1、获取sqlSessionFactory对象
+        SqlSessionFactory sqlSessionFactory = JdbcUtil.getSqlSessionFactory();
+        // 2、获取sqlSession对象
+        try (SqlSession openSession = sqlSessionFactory.openSession()) {
+            // 3、获取接口的实现类对象
+            //会为接口自动的创建一个代理对象，代理对象去执行增删改查方法
+            NotebookMapper mapper = openSession.getMapper(NotebookMapper.class);
+            num = mapper.deleteById(notebookId);
+            openSession.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return num==1;
+    }
+
+    @Override
+    public TreeItem<Notebook> buildTree(List<Notebook> notebookList){
         List<Notebook> notebookTree = getNotebookTree(notebookList);
         if (CollectionUtils.isEmpty(notebookTree)) {
             return null;
         }
-        TreeItem<String> root = new TreeItem<>();
+        TreeItem<Notebook> root = new TreeItem<>();
         for (Notebook notebook : notebookTree) {
-            TreeItem<String> sec = new TreeItem<>(notebook.getName());
+            TreeItem<Notebook> sec = new TreeItem<>(notebook);
+            ImageView bookIcon = new ImageView();
+            bookIcon.setImage(BOOK_ICON);
+            bookIcon.setFitWidth(16);
+            bookIcon.setFitHeight(16);
+            sec.setGraphic(bookIcon);
             buildTree(notebook, sec);
             root.getChildren().add(sec);
         }
@@ -94,13 +138,18 @@ public class NoteServiceImpl implements NoteService {
         return children;
     }
 
-    private void buildTree(Notebook notebook, TreeItem<String> rootItem) {
+    private void buildTree(Notebook notebook, TreeItem<Notebook> rootItem) {
         List<Notebook> children = notebook.getNotebooks();
         if (children == null) {
             return;
         }
         for (Notebook child : children) {
-            TreeItem<String> item = new TreeItem<>(child.getName());
+            TreeItem<Notebook> item = new TreeItem<>(child);
+            ImageView bookIcon = new ImageView();
+            bookIcon.setImage(BOOK_ICON);
+            bookIcon.setFitWidth(16);
+            bookIcon.setFitHeight(16);
+            item.setGraphic(bookIcon);
             rootItem.getChildren().add(item);
             buildTree(child, item);
         }

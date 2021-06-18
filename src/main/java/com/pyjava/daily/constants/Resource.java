@@ -18,5 +18,5 @@ public class Resource {
     public final static Image FILE_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/file-16.png")));
     public final static Image MAIN_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/daily.ico")));
     public final static Image NOTE_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/sticky-note-16.png")));
-
+    public final static Image BOOK_ICON = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("icon/book-16.png")));
 }

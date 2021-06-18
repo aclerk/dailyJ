@@ -20,9 +20,23 @@ public interface NoteService {
     List<Notebook> list();
 
     /**
+     * 保存笔记本
+     * @param notebook 笔记本实体
+     * @return 是否保存成功
+     */
+    Boolean save(Notebook notebook);
+
+    /**
+     * 根据id删除笔记本
+     * @param notebookId 笔记本id
+     * @return 影响行数
+     */
+    Boolean deleteById(String notebookId);
+
+    /**
      * 根据笔记本列表构建tree item
      * @param notebookList 笔记本列表
      * @return {@link TreeItem}
      */
-    TreeItem<String> buildTree(List<Notebook> notebookList);
+    TreeItem<Notebook> buildTree(List<Notebook> notebookList);
 }
