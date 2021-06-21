@@ -8,13 +8,28 @@
         from notebook
     </select>
 
+    <update id="update">
+        update `notebook`
+        set `name` = #{name}
+        where `notebook_id` = #{notebookId}
+    </update>
+
     <insert id="save" parameterType="com.pyjava.daily.entity.Notebook">
-        insert into notebook(`notebook_id`,`parent_id`, `name`, `create_time`, `update_time`)
+        insert into notebook(`notebook_id`, `parent_id`, `name`, `create_time`, `update_time`)
         values (#{notebookId}, #{parentId}, #{name}, #{createTime}, #{updateTime})
     </insert>
 
     <delete id="deleteById" parameterType="string">
-        delete from notebook
+        delete
+        from notebook
         where notebook_id = #{notebookId}
+    </delete>
+
+    <delete id="deleteByIds" parameterType="list">
+        delete from notebook where notebook_id in
+        <foreach collection="ids" item="id" index="no" open="("
+                 separator="," close=")">
+            #{id}
+        </foreach>
     </delete>
 </mapper>

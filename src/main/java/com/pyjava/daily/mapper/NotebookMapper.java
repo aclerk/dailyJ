@@ -2,6 +2,7 @@ package com.pyjava.daily.mapper;
 
 import com.pyjava.daily.entity.Notebook;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -28,9 +29,23 @@ public interface NotebookMapper {
     int save(Notebook notebook);
 
     /**
+     * 更新笔记本信息
+     * @param notebook 笔记本实体
+     * @return 影响行数
+     */
+    int update(Notebook notebook);
+
+    /**
      * 根据id删除笔记本
      * @param notebookId 笔记本id
      * @return 影响行数
      */
     int deleteById(String notebookId);
+
+    /**
+     * 根据id列表递归删除笔记本
+     * @param ids id数组
+     * @return 影响行数
+     */
+    int deleteByIds(@Param("ids") List<String> ids);
 }

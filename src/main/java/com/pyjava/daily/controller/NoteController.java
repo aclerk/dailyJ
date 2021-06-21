@@ -21,10 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static com.pyjava.daily.constants.Resource.BOOK_ICON;
 
@@ -78,9 +75,9 @@ public class NoteController implements Initializable {
                         bookIcon.setFitWidth(16);
                         bookIcon.setFitHeight(16);
                         Node graphic = item == null ? null : bookIcon;
-                        if(null != graphic){
+                        if (null != graphic) {
                             setGraphic(bookIcon);
-                        }else{
+                        } else {
                             setGraphic(null);
                         }
                         setText((empty || item == null) ? "" : item.getName());
@@ -124,9 +121,9 @@ public class NoteController implements Initializable {
             dialog.setResultConverter(dialogButton -> {
                 if (dialogButton == submitButtonType) {
                     String text = notebookName.getText();
-                    if(text == null || "".equals(text)){
+                    if (text == null || "".equals(text)) {
                         return null;
-                    }else{
+                    } else {
                         return text;
                     }
                 }
@@ -136,13 +133,13 @@ public class NoteController implements Initializable {
             Optional<String> s = dialog.showAndWait();
             if (s.isPresent()) {
                 String parentId = null;
-                if(selectItem != null){
+                if (selectItem != null) {
                     Notebook notebook = selectItem.getValue();
                     parentId = notebook.getNotebookId();
                 }
                 Notebook saveEntity = new Notebook();
                 Date date = new Date();
-                saveEntity.setNotebookId(TimeUtils.getTimeString(date)+ UuidUtils.getUuid());
+                saveEntity.setNotebookId(TimeUtils.getTimeString(date) + UuidUtils.getUuid());
                 saveEntity.setParentId(parentId);
                 saveEntity.setName(s.get());
                 saveEntity.setCreateTime(date);
@@ -151,12 +148,32 @@ public class NoteController implements Initializable {
                 notificationCenter.publish("notebook-update");
             }
         });
+        MenuItem renameNoteBook = new MenuItem("重命名");
+        renameNoteBook.setOnAction(actionEvent -> {
+            TreeItem<Notebook> selectItem = leftTree.getSelectionModel().getSelectedItem();
+            logger.debug("delete notebook in {}", selectItem == null ? "root" : selectItem.getValue());
+            if (selectItem != null) {
+                Notebook notebook = selectItem.getValue();
+                TextInputDialog dialog = new TextInputDialog("");
+                dialog.setTitle("rename Dialog");
+                dialog.setContentText("Please enter file name:");
+                Optional<String> s = dialog.showAndWait();
+                s.ifPresent(value -> {
+                    if(!"".equals(value)){
+                        notebook.setUpdateTime(new Date());
+                        notebook.setName(value);
+                        noteService.update(notebook);
+                        notificationCenter.publish("notebook-update");
+                    }
+                });
+            }
+        });
         MenuItem deleteNoteBook = new MenuItem("删除");
         deleteNoteBook.setOnAction(actionEvent -> {
             TreeItem<Notebook> selectItem = leftTree.getSelectionModel().getSelectedItem();
             logger.debug("delete notebook in {}", selectItem == null ? "root" : selectItem.getValue());
 
-            if(selectItem != null){
+            if (selectItem != null) {
                 Alert alert = new Alert(Alert.AlertType.NONE);
                 alert.setTitle("Information");
                 alert.setContentText("Would you like to delete this notebook?");
@@ -167,18 +184,36 @@ public class NoteController implements Initializable {
                 Optional<ButtonType> buttonType = alert.showAndWait();
                 if (buttonType.isPresent()) {
                     ButtonType bt = buttonType.get();
-                    if(bt.getButtonData().equals(ButtonBar.ButtonData.YES)){
+                    if (bt.getButtonData().equals(ButtonBar.ButtonData.YES)) {
                         logger.debug("delete the notebook");
                         Notebook notebook = selectItem.getValue();
-                        noteService.deleteById(notebook.getNotebookId());
+                        List<Notebook> list = noteService.list();
+                        List<String> ids = new ArrayList<>();
+                        ids.add(notebook.getNotebookId());
+                        String parentId = notebook.getNotebookId();
+                        while (true) {
+                            boolean flag = true;
+                            for (Notebook n : list) {
+                                if (parentId.equals(n.getParentId())) {
+                                    parentId = n.getNotebookId();
+                                    ids.add(parentId);
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                            if (flag) {
+                                break;
+                            }
+                        }
+                        noteService.deleteByIds(ids);
                         notificationCenter.publish("notebook-update");
-                    }else if(bt.getButtonData().equals(ButtonBar.ButtonData.NO)){
+                    } else if (bt.getButtonData().equals(ButtonBar.ButtonData.NO)) {
                         logger.debug("do not delete the notebook");
                     }
                 }
             }
         });
-        menu.getItems().addAll(addNoteBook, deleteNoteBook);
+        menu.getItems().addAll(addNoteBook, renameNoteBook, deleteNoteBook);
         leftTree.setContextMenu(menu);
         notificationCenter.publish("notebook-update");
     }

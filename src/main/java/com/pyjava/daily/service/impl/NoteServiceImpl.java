@@ -1,5 +1,6 @@
 package com.pyjava.daily.service.impl;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
 import com.pyjava.daily.entity.Notebook;
 import com.pyjava.daily.mapper.NotebookMapper;
@@ -39,6 +40,9 @@ public class NoteServiceImpl implements NoteService {
             NotebookMapper mapper = openSession.getMapper(NotebookMapper.class);
             query = mapper.list();
         }
+        if(CollectionUtils.isEmpty(query)){
+            return Lists.newArrayList();
+        }
         return query;
     }
 
@@ -53,6 +57,24 @@ public class NoteServiceImpl implements NoteService {
             //会为接口自动的创建一个代理对象，代理对象去执行增删改查方法
             NotebookMapper mapper = openSession.getMapper(NotebookMapper.class);
             num = mapper.save(notebook);
+            openSession.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return num==1;
+    }
+
+    @Override
+    public Boolean update(Notebook notebook) {
+        int num = 0;
+        // 1、获取sqlSessionFactory对象
+        SqlSessionFactory sqlSessionFactory = JdbcUtil.getSqlSessionFactory();
+        // 2、获取sqlSession对象
+        try (SqlSession openSession = sqlSessionFactory.openSession()) {
+            // 3、获取接口的实现类对象
+            //会为接口自动的创建一个代理对象，代理对象去执行增删改查方法
+            NotebookMapper mapper = openSession.getMapper(NotebookMapper.class);
+            num = mapper.update(notebook);
             openSession.commit();
         }catch (Exception e){
             e.printStackTrace();
@@ -76,6 +98,24 @@ public class NoteServiceImpl implements NoteService {
             e.printStackTrace();
         }
         return num==1;
+    }
+
+    @Override
+    public Boolean deleteByIds(List<String> ids){
+        int num = 0;
+        // 1、获取sqlSessionFactory对象
+        SqlSessionFactory sqlSessionFactory = JdbcUtil.getSqlSessionFactory();
+        // 2、获取sqlSession对象
+        try (SqlSession openSession = sqlSessionFactory.openSession()) {
+            // 3、获取接口的实现类对象
+            //会为接口自动的创建一个代理对象，代理对象去执行增删改查方法
+            NotebookMapper mapper = openSession.getMapper(NotebookMapper.class);
+            num = mapper.deleteByIds(ids);
+            openSession.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return num==ids.size();
     }
 
     @Override

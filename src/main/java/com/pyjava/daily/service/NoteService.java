@@ -15,7 +15,8 @@ import java.util.List;
 public interface NoteService {
     /**
      * 查询所有笔记本数据
-     * @return {@link Notebook} list
+     * @return {@link Notebook} list.
+     * (it guarantees that this function returns array )
      */
     List<Notebook> list();
 
@@ -27,11 +28,25 @@ public interface NoteService {
     Boolean save(Notebook notebook);
 
     /**
+     * 保存笔记本
+     * @param notebook 笔记本实体
+     * @return 是否保存成功
+     */
+    Boolean update(Notebook notebook);
+
+    /**
      * 根据id删除笔记本
      * @param notebookId 笔记本id
-     * @return 影响行数
+     * @return 是否删除
      */
     Boolean deleteById(String notebookId);
+
+    /**
+     * 根据id列表递归删除笔记本
+     * @param ids id数组
+     * @return 是否删除
+     */
+    Boolean deleteByIds(List<String> ids);
 
     /**
      * 根据笔记本列表构建tree item
