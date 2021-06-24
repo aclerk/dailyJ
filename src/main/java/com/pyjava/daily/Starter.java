@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.pyjava.daily.config.DailyModule;
-import com.pyjava.daily.config.GlobalConfig;
 import com.pyjava.daily.constants.Constants;
 import com.pyjava.daily.thread.NoteFxThreadPool;
 import com.pyjava.daily.util.InjectorUtils;
@@ -15,13 +14,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+
+import static com.pyjava.daily.constants.Constants.DB_PATH;
 
 /**
  * <p>描述: [功能描述] </p>
@@ -84,42 +84,18 @@ public class Starter extends Application {
      *
      * @throws IOException IO异常
      */
-    private void load() throws IOException {
+    private void load() throws Exception {
         // 全局配置文件创建
         File globalConfigFolder = new File(Constants.GLOBAL_CONFIG_FOLDER_PATH);
         if (!globalConfigFolder.exists()) {
             boolean mkdir = globalConfigFolder.mkdir();
         }
-        Injector injector = InjectorUtils.getInjector();
+        File dbFile = new File(DB_PATH);
+        JdbcUtil.init(DB_PATH);
 
-        GlobalConfig instance = injector.getInstance(GlobalConfig.class);
-        File globalConfigFile = new File(Constants.GLOBAL_CONFIG_FILE_PATH);
-        if (!globalConfigFile.exists()) {
-            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(globalConfigFile), StandardCharsets.UTF_8);
-            osw.write(OBJECT_MAPPER.writeValueAsString(instance));
-            //清空缓冲区，强制输出数据
-            osw.flush();
-            //关闭输出流
-            osw.close();
-        } else {
-            // 如果已经存在了该文件则直接读取
-            FileReader fileReader = new FileReader(globalConfigFile);
-            Reader reader = new InputStreamReader(new FileInputStream(globalConfigFile), StandardCharsets.UTF_8);
-            int ch;
-            StringBuilder sb = new StringBuilder();
-            while ((ch = reader.read()) != -1) {
-                sb.append((char) ch);
-            }
-            fileReader.close();
-            reader.close();
-            String globalConfigStr = sb.toString();
-            GlobalConfig globalConfig = OBJECT_MAPPER.readValue(globalConfigStr, GlobalConfig.class);
-            instance.setGlobalConfig(globalConfig);
-        }
-        logger.debug(instance.toString());
-        // 初始化datasource
-        if (StringUtils.isNotEmpty(instance.getLastOpenDb())) {
-            JdbcUtil.init(instance.getLastOpenDb());
+        if (!dbFile.exists()) {
+            // 创建完成dailyJ目录后,获取jdbc连接
+            JdbcUtil.initDb();
         }
     }
 

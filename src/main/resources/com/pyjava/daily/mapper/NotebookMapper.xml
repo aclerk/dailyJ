@@ -5,7 +5,7 @@
 <mapper namespace="com.pyjava.daily.mapper.NotebookMapper">
     <select id="list" resultType="com.pyjava.daily.entity.Notebook">
         select *
-        from notebook
+        from `notebook`
     </select>
 
     <update id="update">

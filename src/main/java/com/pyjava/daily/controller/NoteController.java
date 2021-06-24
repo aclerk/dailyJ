@@ -1,9 +1,11 @@
 package com.pyjava.daily.controller;
 
 import com.google.inject.Inject;
+import com.pyjava.daily.entity.Note;
 import com.pyjava.daily.entity.Notebook;
 import com.pyjava.daily.notification.NotificationCenter;
 import com.pyjava.daily.service.NoteService;
+import com.pyjava.daily.service.NotebookService;
 import com.pyjava.daily.util.TimeUtils;
 import com.pyjava.daily.util.UuidUtils;
 import javafx.application.Platform;
@@ -41,11 +43,15 @@ public class NoteController implements Initializable {
     @FXML
     public TreeView<Notebook> leftTree;
     @FXML
-    public StackPane areaPane;
+    public StackPane noteListPane;
+    @FXML
+    public ListView<Note> noteList;
 
     @Inject
     private NotificationCenter notificationCenter;
 
+    @Inject
+    private NotebookService notebookService;
     @Inject
     private NoteService noteService;
 
@@ -57,8 +63,8 @@ public class NoteController implements Initializable {
 
         notificationCenter.subscribe("notebook-update", (key, payload) -> {
             logger.debug("key={},payload={}", key, payload);
-            List<Notebook> notebooks = noteService.list();
-            TreeItem<Notebook> items = noteService.buildTree(notebooks);
+            List<Notebook> notebooks = notebookService.list();
+            TreeItem<Notebook> items = notebookService.buildTree(notebooks);
             leftTree.setRoot(items);
             leftTree.setShowRoot(false);
         });
@@ -89,8 +95,16 @@ public class NoteController implements Initializable {
             //这里点击的如果是树，则event.getTarget() 的类型是 LabeledText,可以根据这个特点做判断
             Node node = event.getPickResult().getIntersectedNode();
             if (node instanceof TreeCell && "".equals(((TreeCell) node).getText())) {
-                logger.debug("clear selection");
                 leftTree.getSelectionModel().clearSelection();
+            }else{
+                // if double click the notebook
+                // it will show the note under notebook
+                if(event.getClickCount() == 2){
+                    TreeItem<Notebook> item = leftTree.getSelectionModel().getSelectedItem();
+                    Notebook notebook = item.getValue();
+                    List<Note> notes = noteService.listByNotebookId(notebook.getNotebookId());
+                    logger.debug(String.valueOf(notes.size()));
+                }
             }
         });
         // 目录树中添加菜单那
@@ -144,7 +158,7 @@ public class NoteController implements Initializable {
                 saveEntity.setName(s.get());
                 saveEntity.setCreateTime(date);
                 saveEntity.setUpdateTime(date);
-                noteService.save(saveEntity);
+                notebookService.save(saveEntity);
                 notificationCenter.publish("notebook-update");
             }
         });
@@ -159,10 +173,10 @@ public class NoteController implements Initializable {
                 dialog.setContentText("Please enter file name:");
                 Optional<String> s = dialog.showAndWait();
                 s.ifPresent(value -> {
-                    if(!"".equals(value)){
+                    if (!"".equals(value)) {
                         notebook.setUpdateTime(new Date());
                         notebook.setName(value);
-                        noteService.update(notebook);
+                        notebookService.update(notebook);
                         notificationCenter.publish("notebook-update");
                     }
                 });
@@ -187,7 +201,7 @@ public class NoteController implements Initializable {
                     if (bt.getButtonData().equals(ButtonBar.ButtonData.YES)) {
                         logger.debug("delete the notebook");
                         Notebook notebook = selectItem.getValue();
-                        List<Notebook> list = noteService.list();
+                        List<Notebook> list = notebookService.list();
                         List<String> ids = new ArrayList<>();
                         ids.add(notebook.getNotebookId());
                         String parentId = notebook.getNotebookId();
@@ -205,7 +219,7 @@ public class NoteController implements Initializable {
                                 break;
                             }
                         }
-                        noteService.deleteByIds(ids);
+                        notebookService.deleteByIds(ids);
                         notificationCenter.publish("notebook-update");
                     } else if (bt.getButtonData().equals(ButtonBar.ButtonData.NO)) {
                         logger.debug("do not delete the notebook");
@@ -215,6 +229,14 @@ public class NoteController implements Initializable {
         });
         menu.getItems().addAll(addNoteBook, renameNoteBook, deleteNoteBook);
         leftTree.setContextMenu(menu);
+
+
+        // list view的右击菜单
+        ContextMenu listMenu = new ContextMenu();
+        MenuItem newNote = new MenuItem("新建笔记");
+        listMenu.getItems().addAll(newNote);
+        noteList.setContextMenu(listMenu);
+
         notificationCenter.publish("notebook-update");
     }
 }

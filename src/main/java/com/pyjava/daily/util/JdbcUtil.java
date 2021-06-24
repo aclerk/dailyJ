@@ -1,6 +1,7 @@
 package com.pyjava.daily.util;
 
 
+import com.pyjava.daily.mapper.NoteMapper;
 import com.pyjava.daily.mapper.NotebookMapper;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -45,7 +46,7 @@ public class JdbcUtil {
         }
     }
 
-    public static void init(String dbName) {
+    public static void init(String dbName) throws Exception {
         logger.debug("initializing db:{}", dbName);
         SQLiteDataSource ds = new SQLiteDataSource();
         ds.setUrl(URL_PREFIX + dbName);
@@ -59,6 +60,7 @@ public class JdbcUtil {
         Environment environment = new Environment("default", transactionFactory, dataSource);
         configuration.setEnvironment(environment);
         configuration.addMapper(NotebookMapper.class);
+        configuration.addMapper(NoteMapper.class);
         return new SqlSessionFactoryBuilder().build(configuration);
     }
 
@@ -66,11 +68,8 @@ public class JdbcUtil {
         return dataSource;
     }
 
-    public static void initDb(String dbName) throws Exception {
-        logger.debug("initializing db:{}", dbName);
-        SQLiteDataSource ds = new SQLiteDataSource();
-        ds.setUrl(URL_PREFIX + dbName);
-        Connection connection = ds.getConnection();
+    public static void initDb() throws Exception {
+        Connection connection = dataSource.getConnection();
         if (connection != null) {
             StringBuffer command = null;
             URL resource = JdbcUtil.class.getClassLoader().getResource("sql/init.sql");

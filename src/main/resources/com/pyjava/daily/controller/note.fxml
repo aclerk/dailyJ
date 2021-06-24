@@ -17,8 +17,8 @@
                 </TreeView>
             </center>
         </BorderPane>
-        <StackPane fx:id="areaPane">
-            <ListView>
+        <StackPane fx:id="noteListPane">
+            <ListView fx:id="noteList">
 
             </ListView>
         </StackPane>

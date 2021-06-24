@@ -30,13 +30,13 @@ public class Constants {
     /**
      * 全局变量目录绝对路径
      */
-    public static final String GLOBAL_CONFIG_FOLDER_PATH = USER_HOME + FILE_SEPARATOR + ".daily";
+    public static final String GLOBAL_CONFIG_FOLDER_PATH = USER_HOME + FILE_SEPARATOR + ".dailyJ";
     /**
-     * 全局变量文件名称
+     * db名称
      */
-    public static final String GLOBAL_CONFIG_FILE_NAME = "daily-config.json";
+    public static final String DB_NAME = "daily.db";
     /**
-     * 全局变量文件绝对路径
+     * db绝对路径
      */
-    public static final String GLOBAL_CONFIG_FILE_PATH = GLOBAL_CONFIG_FOLDER_PATH + FILE_SEPARATOR + "daily-config.json";
+    public static final String DB_PATH = GLOBAL_CONFIG_FOLDER_PATH + FILE_SEPARATOR + DB_NAME;
 }
